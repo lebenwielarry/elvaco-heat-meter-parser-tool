@@ -14,17 +14,17 @@ header {
 }
 
 main {
-    margin: 0 auto; /* Zentriere den Inhalt */
-    padding: 20px; /* Zusätzlicher innerer Abstand */
-    max-width: 4000px; /* Begrenze die maximale Breite */
+    margin: 0 auto; 
+    padding: 20px; 
+    max-width: 4000px; 
 }
 footer {
     text-align: center;
     padding: 4rem;
-    background-color: #f4f4f4; /* Heller Hintergrund */
-    font-size: 25px; /* Kleine Schriftgröße */
-    color: #333; /* Kontrastreiche Farbe */
-    border-top: 1px solid #ddd; /* Dezente Trennlinie */
+    background-color: #f4f4f4; 
+    font-size: 25px; 
+    color: #333; 
+    border-top: 1px solid #ddd; 
     max-height: 200px;
 }
 

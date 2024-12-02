@@ -17,11 +17,8 @@ Chart.register({
         }
     }
 });
-
 const charts = {}; // Speicher für alle Diagramme
-
 const chartKeys = ['energy', 'volume', 'power', 'flow', 'forwardTemperature', 'returnTemperature'];
-
 const fixedAxisRanges = {
     energy: { min: 0, max: 550 }, 
     volume: { min: 0, max: 5000 },
@@ -30,7 +27,6 @@ const fixedAxisRanges = {
     forwardTemperature: { min: 0, max: 120 },
     returnTemperature: { min: 0, max: 120 },
 };
-
 const units = {
     energy: 'MWh',
     volume: 'm³',
@@ -39,7 +35,6 @@ const units = {
     forwardTemperature: '°C',
     returnTemperature: '°C',
 };
-
 const errorTables = {
     UH_50: [
         { bitNo: 0, decimalValue: 1, identifier: 'F0', explanation: 'Error during flow metering (e.g. Air in measuring pipe)' },
@@ -60,11 +55,34 @@ const errorTables = {
         { bitNo: 15, decimalValue: '-', identifier: '-', explanation: 'Always 0' },
     ],
     // Andere Maschinen können hier hinzugefügt werden
-    UH_30: [],
+    UH_30: [
+        { bitNo: 0, decimalValue: 1, identifier: 'F.0', explanation: 'No flow can be measured (F0)' },
+        { bitNo: 1, decimalValue: 2, identifier: 'F.1', explanation: 'Interruption in the hot side temperature sensor (F1)' },
+        { bitNo: 2, decimalValue: 4, identifier: 'F.2', explanation: 'Interruption in the cold side temperature sensor (F2)' },
+        { bitNo: 3, decimalValue: 8, identifier: 'F.3', explanation: 'Electronics for temperature evaluation defective (F3)' },
+        { bitNo: 4, decimalValue: 16, identifier: 'E.0', explanation: 'Problem with the power supply; Battery empty (F4)' },
+        { bitNo: 5, decimalValue: 32, identifier: 'E.1', explanation: 'Short-circuit forward flow temperature sensor (F5)' },
+        { bitNo: 6, decimalValue: 64, identifier: 'E.2', explanation: 'Short-circuit return flow temperature sensor (F6)' },
+        { bitNo: 7, decimalValue: 128, identifier: 'E.3', explanation: 'Fault in internal memory holding (EEPROM) (F7)' },
+        { bitNo: 8, decimalValue: 256, identifier: 'D.0', explanation: 'Errors F1, F2, F3, F5 or F6 for longer than 8 hours, recognition of attempts to manipulate. No further measurements are carried out. (F8)' },
+        { bitNo: 9, decimalValue: 512, identifier: 'D.1', explanation: 'Fault in the electronics (F9)' },
+        { bitNo: 10, decimalValue: 1024, identifier: 'D.2', explanation: 'Reserved' },
+        { bitNo: 11, decimalValue: 2048, identifier: 'D.3', explanation: '0 = Amount of energy in case of incorrect installation, 1 = Amount of cooling energy' },
+        { bitNo: 12, decimalValue: 4096, identifier: 'C.0', explanation: '0 = Installation location cannot be changed when calibration seal is set, 1 = Installation location can be changed when calibration seal is set' },
+        { bitNo: 13, decimalValue: 8192, identifier: 'B.0', explanation: 'F0 pre-warning' },
+        { bitNo: 14, decimalValue: 16384, identifier: 'B.1', explanation: 'F4 pre-warning' },
+        { bitNo: 15, decimalValue: 32768, identifier: 'B.2', explanation: 'Installation error sensor' },
+        { bitNo: 16, decimalValue: 65536, identifier: 'B.3', explanation: 'Installation error volume measurement part' },
+        { bitNo: 17, decimalValue: 131072, identifier: 'A.0', explanation: 'Negative temperature difference (Difference-Negative)' },
+        { bitNo: 18, decimalValue: 262144, identifier: 'A.1', explanation: 'Incorrect flow direction (Flow-Negative)' },
+        { bitNo: 19, decimalValue: 524288, identifier: 'A.3', explanation: '0 = Installation in return flow position, 1 = Installation in forward flow position' },
+        { bitNo: 20, decimalValue: 1048576, identifier: 'ZZ.6', explanation: 'Leakage warning (water meters)' },
+        { bitNo: 21, decimalValue: 2097152, identifier: 'ZZ.7', explanation: 'Time error DSMR' },
+    ],
+    
     Sharky: [],
     Itron: [],
 };
-
 const plausibleRanges = {
     energy: [50, 500], // Beispielbereich für Energie
     volume: [100, 1000],
@@ -73,10 +91,13 @@ const plausibleRanges = {
     forwardTemperature: [0, 100],
     returnTemperature: [0, 100],
 };
+
 // Globale Variable, um zu verfolgen, ob der Verarbeiten-Button gedrückt wurde
 let isProcessed = false;
+
 initializeEmptyTable();
 initializeEmptyCharts();
+
 // Funktion, um die Seite zurückzusetzen
 function resetPage() {
     // Tabelle leeren
@@ -137,7 +158,6 @@ document.getElementById('process-uh50').addEventListener('click', () => {
     processPayload(hexInput);
 });
 
-
 // Event Listener für "Plausibility Check"-Button
 document.getElementById('plausibility-check-btn').addEventListener('click', () => {
     if (!isProcessed) {
@@ -187,10 +207,6 @@ function initializeEmptyTable() {
     // Lasse die Tabelle leer, aber mit einer sichtbaren Struktur
     tableBody.innerHTML = ''; // Tabelle wird ohne Inhalt angezeigt
 }
-
-
-
-
 
 // Funktion zur Anzeige von Payload-Details in der Tabelle
 function displayPayloadDetails(payload) {
@@ -291,9 +307,6 @@ function applyPlausibilityChecks() {
     });
 }
 
-
-
-
 function initializeEmptyCharts() {
     const chartsContainer = document.getElementById('charts');
     chartsContainer.innerHTML = ''; // Alte Inhalte entfernen
@@ -360,7 +373,6 @@ function initializeEmptyCharts() {
         });
     });
 }
-
 
 function updateCharts(payload) {
     Object.entries(payload).forEach(([key, value]) => {
