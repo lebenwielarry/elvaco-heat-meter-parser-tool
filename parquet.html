@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parquet File Processor</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="module" src="parquet.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Parquet File Processor</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="parquet.html">Parquet Processor</a>
+        </nav>
+    </header>
+    <main>
+        <section id="parquet-upload">
+            <h2>Upload Parquet File</h2>
+            <input type="file" id="parquet-file-input" accept=".parquet">
+            <button id="process-parquet-btn" disabled>Process Parquet</button>
+        </section>
+        <section id="parquet-results">
+            <h2>Results</h2>
+            <div id="parquet-output">
+                <p>No file processed yet.</p>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Fortgeschrittenenpraktikum</p>
+    </footer>
+</body>
+</html>
