@@ -69,6 +69,19 @@ th {
     background-color: #f0f0f0;
 }
 
+#radar-chart{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+.chart{
+    position: relative;
+    width: 50%;
+    height: 50%
+}
+
+
 /* Hauptcontainer für Diagramme und Tabelle */
 #charts-container {
     display: flex; /* Flexbox für nebeneinander Anordnung */

@@ -497,3 +497,26 @@ function displayErrorTable(machine, errorsArray = []) {
     table.appendChild(tbody);
     tableContainer.appendChild(table);
 }
+
+
+function initializeEmptyRadarChart(){
+    var radarCanvas = getElementById("radarChart");
+
+    Chart.defaults.font.family = "Lato";
+    Chart.defaults.font.size = 20;
+    Chart.defaults.color = "black";
+
+    var radarChartData = {
+            label: ["Energy", "Volume", "Power", "Flow", "ForwardTemperature", "ReturnTemperature"],
+            datasets:[
+                {
+                label: "Payload",
+                backgroundColor: "#ac28ed",
+                borderColor: "black",
+                borderWidth: 1,
+                data:[0, 0, 0, 0, 0, 0]
+                }
+            ]
+        };
+    
+}
