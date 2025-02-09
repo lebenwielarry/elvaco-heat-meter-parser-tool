@@ -466,10 +466,10 @@ function updateCharts(payload) {
         });
     });
 
-    if (charts['radar']){
-        charts['radar'].data.datasets[0].data = [value];
-        charts['radar'].update();
-    }
+        if (charts['radar']){
+            charts['radar'].data.datasets[0].data = [value];
+            charts['radar'].update();
+        }      
 
 }
 
