@@ -375,7 +375,7 @@ function initializeEmptyCharts() {
         });
     });
 
-    const radarCanvas = document.createElement('canvas');
+ /*    const radarCanvas = document.createElement('canvas');
     radarCanvas.id = 'radar-chart';
     chartsContainer.appendChild(radarCanvas)
 
@@ -401,7 +401,7 @@ function initializeEmptyCharts() {
                 legend: {labels: {font: {size: 20}}}
             }
         }
-    });
+     });*/
 }
 
 function updateCharts(payload) {
