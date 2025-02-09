@@ -97,6 +97,7 @@ let isProcessed = false;
 
 initializeEmptyTable();
 initializeEmptyCharts();
+initializeEmptyRadarChart();
 
 // Funktion, um die Seite zurückzusetzen
 function resetPage() {
@@ -533,24 +534,31 @@ function displayErrorTable(machine, errorsArray = []) {
 }
 
 
-function initializeEmptyRadarChart(){
-    var radarCanvas = getElementById("radarChart");
+const radar_data  =[92, 89, 40, 25, 56, 64];
 
-    Chart.defaults.font.family = "Lato";
-    Chart.defaults.font.size = 20;
-    Chart.defaults.color = "black";
+const radar_labels = [
+    'Energy',
+    'Volume',
+    'Power',
+    'Flow',
+    'forwardTemperature',
+    'returnTemperature',
+];
 
-    var radarChartData = {
-            label: ["Energy", "Volume", "Power", "Flow", "ForwardTemperature", "ReturnTemperature"],
-            datasets:[
-                {
-                label: "Payload",
-                backgroundColor: "#ac28ed",
-                borderColor: "black",
-                borderWidth: 1,
-                data:[0, 0, 0, 0, 0, 0]
-                }
-            ]
-        };
-    
-}
+const myRadarChart = new Chart('myRadarChart',{
+    type: 'radar',
+    data:{
+        labels: radar_labels,
+        datasets:[
+            {
+                label: 'Data',
+                data: radar_data,
+                fill: true,
+                backgroundColor: 'rgba(135, 184, 143, 0.6)',
+                borderColor: 'rgb(15, 4, 232)',
+                pointBackgroundColor: 'rgb(32, 8, 142)',
+                pointBorderColor:'#fff',
+            },
+        ]
+    },
+});
