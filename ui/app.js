@@ -404,6 +404,7 @@ function initializeEmptyCharts() {
      });*/
 }
 
+
 function updateCharts(payload) {
     Object.entries(payload).forEach(([key, value]) => {
         if (!chartKeys.includes(key)) return; // Überspringe Keys, die nicht in chartKeys enthalten sind
