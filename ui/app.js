@@ -467,7 +467,7 @@ function updateCharts(payload) {
     });
 
     if (charts['radar']){
-        charts['radar'].data.datasets[0].data = radarData;
+        charts['radar'].data.datasets[0].data = [value];
         charts['radar'].update();
     }
 
