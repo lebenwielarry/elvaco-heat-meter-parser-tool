@@ -97,6 +97,7 @@ let isProcessed = false;
 
 initializeEmptyTable();
 initializeEmptyCharts();
+initializeRadarChart();
 
 
 // Funktion, um die Seite zurückzusetzen
@@ -533,5 +534,41 @@ function displayErrorTable(machine, errorsArray = []) {
     tableContainer.appendChild(table);
 }
 
+// Function to initialize the radar chart
+function initializeRadarChart() {
+    const radarCanvas = document.getElementById("radar-chart");
+    if (!radarCanvas) {
+        console.error("Radar chart canvas not found.");
+        return;
+    }
 
+    const radarCtx = radarCanvas.getContext("2d");
+
+    const radarData = {
+        labels: ["Category A", "Category B", "Category C", "Category D", "Category E"],
+        datasets: [{
+            label: "Radar Chart Dataset",
+            data: [20, 40, 60, 80, 100],  // Example values, change dynamically as needed
+            fill: true,
+            backgroundColor: "rgba(54, 162, 235, 0.2)",
+            borderColor: "rgba(54, 162, 235, 1)",
+            pointBackgroundColor: "rgba(54, 162, 235, 1)",
+        }]
+    };
+
+    new Chart(radarCtx, {
+        type: "radar",
+        data: radarData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    suggestedMin: 0,
+                    suggestedMax: 100
+                }
+            }
+        }
+    });
+}
 

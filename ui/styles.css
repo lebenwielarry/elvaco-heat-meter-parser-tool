@@ -69,17 +69,7 @@ th {
     background-color: #f0f0f0;
 }
 
-#radar-chart{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 200px;
-}
-.chart{
-    position: relative;
-    width: 50%;
-    height: 50%
-}
+
 
 
 /* Hauptcontainer für Diagramme und Tabelle */
@@ -131,5 +121,14 @@ th {
 
 .error-table tbody tr:nth-child(even) {
     background-color: #f9f9f9;
+}
+
+#radar-chart {
+    display: block;
+    margin: 20px auto; /* Centers the radar chart */
+    max-width: 500px; /* Adjust width for radar chart */
+    height: 400px; /* Adjust height */
+    border: 2px solid #3498db; /* Optional: Add a border for visibility */
+    background-color: rgba(52, 152, 219, 0.1); /* Optional: Light blue background */
 }
 
