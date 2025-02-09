@@ -386,7 +386,7 @@ function initializeEmptyCharts() {
                 label: 'Overview',
                 data: [0],
                 backgroundColor: 'rgba(7, 210, 20, 0.95)',
-                borderColor: 'rgb(75, 192, 192)',
+                borderColor: 'rgb(227, 9, 9)',
                 borderWidth: 1,
             }]
         },
