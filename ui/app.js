@@ -97,7 +97,9 @@ let isProcessed = false;
 
 initializeEmptyTable();
 initializeEmptyCharts();
-initializeEmptyRadarChart();
+document.addEventListener("DOMContentLoaded", function () {
+    initializeEmptyRadarChart(); // Call function to initialize empty radar chart
+});
 
 // Funktion, um die Seite zurückzusetzen
 function resetPage() {
