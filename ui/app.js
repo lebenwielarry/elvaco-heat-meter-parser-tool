@@ -467,7 +467,7 @@ function updateCharts(payload) {
     });
 
         if (charts['radar']){
-            charts['radar'].data.datasets[0].data = [value];
+            charts['radar'].data.datasets[0].data = [40, 50, 60, 30, 10, 80];
             charts['radar'].update();
         }      
 
