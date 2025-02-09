@@ -471,10 +471,10 @@ function updateCharts(payload) {
         });
     });
 
-    if (charts['radar']){
-        charts['radar'].data.datasets[0].data = [40, 50, 60, 30, 10, 80];
-        charts['radar'].update();
-    }      
+    //if (charts['radar']){
+    //    charts['radar'].data.datasets[0].data = [40, 50, 60, 30, 10, 80];
+    //    charts['radar'].update();
+    //}      
 
 }
 
@@ -575,7 +575,7 @@ function initializeRadarChart() {
     });
 }
 
-function updateRadarChart(payload){
-    radarChart.data.datasets[0].data = [40, 50, 60, 30, 10, 80];
+function updateRadarChart(payloadData){
+    radarChart.data.datasets[0].data = [150, 50, 60, 30, 10, 80];
     radarChart.update();
 }
