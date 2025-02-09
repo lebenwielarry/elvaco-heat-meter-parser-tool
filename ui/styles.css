@@ -125,7 +125,7 @@ th {
 
 #radar-chart {
     display: block;
-    margin: 20px auto; /* Centers the radar chart */
+    /*margin: 20px auto;*/ /* Centers the radar chart */
     max-width: 500px; /* Adjust width for radar chart */
     height: 400px; /* Adjust height */
     border: 2px solid #3498db; /* Optional: Add a border for visibility */
