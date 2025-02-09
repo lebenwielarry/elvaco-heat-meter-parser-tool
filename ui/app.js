@@ -385,7 +385,7 @@ function initializeEmptyCharts() {
             datasets:[{
                 label: 'Overview',
                 data: [0],
-                backgroundColor: 'rgba(232, 18, 18, 0.3)',
+                backgroundColor: 'rgba(7, 210, 20, 0.95)',
                 borderColor: 'rgb(75, 192, 192)',
                 borderWidth: 1,
             }]
