@@ -534,31 +534,42 @@ function displayErrorTable(machine, errorsArray = []) {
 }
 
 
-const radar_data  =[92, 89, 40, 25, 56, 64];
+function initializeEmptyRadarChart() {
+    const radarCanvas = document.getElementById("radar-chart");
+    if (!radarCanvas) {
+        console.error("Canvas element for radar chart not found.");
+        return;
+    }
 
-const radar_labels = [
-    'Energy',
-    'Volume',
-    'Power',
-    'Flow',
-    'forwardTemperature',
-    'returnTemperature',
-];
+    
+    const radarCtx = radarCanvas.getContext("2d");
+    
+    const emptyRadarData = {
+        labels: ["Category A", "Category B", "Category C", "Category D", "Category E"],
+        datasets: [{
+            label: "Empty Dataset",
+            data: [0, 0, 0, 0, 0], // All values set to zero (empty)
+            fill: true,
+            backgroundColor: "rgba(54, 162, 235, 0.2)",
+            borderColor: "rgba(54, 162, 235, 1)",
+            pointBackgroundColor: "rgba(54, 162, 235, 1)",
+        }]
+    };
 
-const myRadarChart = new Chart('myRadarChart',{
-    type: 'radar',
-    data:{
-        labels: radar_labels,
-        datasets:[
-            {
-                label: 'Data',
-                data: radar_data,
-                fill: true,
-                backgroundColor: 'rgba(135, 184, 143, 0.6)',
-                borderColor: 'rgb(15, 4, 232)',
-                pointBackgroundColor: 'rgb(32, 8, 142)',
-                pointBorderColor:'#fff',
-            },
-        ]
-    },
-});
+    const radarConfig = {
+        type: "radar",
+        data: emptyRadarData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    suggestedMin: 0,
+                    suggestedMax: 100
+                }
+            }
+        }
+    };
+
+    new Chart(radarCtx, radarConfig);
+}
