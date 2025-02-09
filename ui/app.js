@@ -18,6 +18,7 @@ Chart.register({
     }
 });
 const charts = {}; // Speicher für alle Diagramme
+let radarChart;
 const chartKeys = ['energy', 'volume', 'power', 'flow', 'forwardTemperature', 'returnTemperature'];
 const fixedAxisRanges = {
     energy: { min: 0, max: 550 }, 
@@ -180,6 +181,7 @@ function processPayload(payload) {
         // Update the details table and charts
         displayPayloadDetails(result);
         updateCharts(result);
+        updateRadarChart(result);
 
         // Extract the errors array
         const activeErrors = result.errors && result.errors !== 0 ? result.errors : []; // Handle 0 as no errors
@@ -557,7 +559,7 @@ function initializeRadarChart() {
         }]
     };
 
-    new Chart(radarCtx, {
+    radarChart = new Chart(radarCtx, {
         type: "radar",
         data: radarData,
         options: {
@@ -573,3 +575,7 @@ function initializeRadarChart() {
     });
 }
 
+function updateRadarChart(payload){
+    radarChart.data.datasets[0].data = [40, 50, 60, 30, 10, 80];
+    radarChart.update();
+}
