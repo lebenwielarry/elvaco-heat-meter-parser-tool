@@ -124,11 +124,12 @@ th {
 }
 
 #radar-chart {
-    display: block;
+    flex: 1;
+    display: flex;
     /*margin: 20px auto; /* Centers the radar chart */
     max-width: 500px; /* Adjust width for radar chart */
     max-height: 400px; /* Adjust height */
-    border: 2px solid #00d5ff; /* Optional: Add a border for visibility */
-    background-color: rgba(176, 225, 255, 0.349); /* Optional: Light blue background */
+    border: 2px solid #f679797c; /* Optional: Add a border for visibility */
+    background-color: rgba(235, 63, 63, 0.778); /* Optional: Light blue background */
 }
 
