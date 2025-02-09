@@ -372,6 +372,34 @@ function initializeEmptyCharts() {
             },
         });
     });
+
+    const radarCanvas = document.createElement('canvas');
+    radarCanvas.id = 'radar-chart';
+    chartsContainer.appendChild(radarCanvas)
+
+    const radarCtx = radarCanvas.getContext('2d');
+    charts['radar'] = new Chart(radarCtx, {
+        type: 'radar',
+        data:{
+            labels: dataKeys,
+            datasets:[{
+                label: 'Overview',
+                data: Array(dataKeys.length).fill(0),
+                backgroundColor: 'rgba(75, 192, 192, 0.3)',
+                borderColor: 'rgb(75, 192, 192)',
+                borderWidth: 1,
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                r: {suggestedMin: 0, suggestedMax: 100}
+            },
+            plugins:{
+                legend: {labels: {font: {size: 20}}}
+            }
+        }
+    });
 }
 
 function updateCharts(payload) {
@@ -437,6 +465,12 @@ function updateCharts(payload) {
             },
         });
     });
+
+    if (charts['radar']){
+        charts['radar'].data.datasets[0].data = radarData;
+        charts['radar'].update();
+    }
+
 }
 
 function displayErrorTable(machine, errorsArray = []) {
