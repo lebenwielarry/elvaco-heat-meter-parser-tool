@@ -130,6 +130,6 @@ th {
     max-width: 500px; /* Adjust width for radar chart */
     max-height: 400px; /* Adjust height */
     /*border: 2px solid #f679797c; /* Optional: Add a border for visibility */
-    /*background-color: rgba(235, 63, 63, 0.778); /* Optional: Light blue background */
+    background-color: rgba(235, 63, 63, 0.778); /* Optional: Light blue background */
 }
 
