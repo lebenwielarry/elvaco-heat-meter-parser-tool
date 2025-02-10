@@ -576,7 +576,13 @@ function initializeRadarChart() {
 }
 
 function updateRadarChart(payloadData){
-    radarData = payloadData
+    radarData = [];
+
+    Object.entries(payloadData).forEach(([key, value])=>{
+        if(chartKeys.includes(key)){
+            radarData.push(value);
+        }
+    });
     radarChart.data.datasets[0].data = radarData;
     radarChart.update();
 }
