@@ -19,7 +19,8 @@ Chart.register({
 });
 const charts = {}; // Speicher für alle Diagramme
 let radarChart;
-const chartKeys = ['energy', 'volume', 'power', 'flow', 'forwardTemperature', 'returnTemperature'];
+//const chartKeys = ['energy', 'volume', 'power', 'flow', 'forwardTemperature', 'returnTemperature'];
+const chartKeys = ['power', 'flow', 'forwardTemperature', 'returnTemperature'];
 const fixedAxisRanges = {
     energy: { min: 0, max: 550 }, 
     volume: { min: 0, max: 5000 },
