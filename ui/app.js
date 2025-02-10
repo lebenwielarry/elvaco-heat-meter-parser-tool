@@ -576,7 +576,7 @@ function initializeRadarChart() {
 }
 
 function updateRadarChart(payloadData){
-    radarData = [];
+    let radarData = [];
 
     Object.entries(payloadData).forEach(([key, value])=>{
         if(chartKeys.includes(key)){
