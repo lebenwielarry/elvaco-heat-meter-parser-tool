@@ -19,8 +19,8 @@ Chart.register({
 });
 const charts = {}; // Speicher für alle Diagramme
 let radarChart;
-//const chartKeys = ['energy', 'volume', 'power', 'flow', 'forwardTemperature', 'returnTemperature'];
-const chartKeys = ['power', 'flow', 'forwardTemperature', 'returnTemperature'];
+const chartKeys = ['energy', 'volume', 'power', 'flow', 'forwardTemperature', 'returnTemperature'];
+const radarChartKeys = ['power', 'flow', 'forwardTemperature', 'returnTemperature'];
 const fixedAxisRanges = {
     energy: { min: 0, max: 550 }, 
     volume: { min: 0, max: 5000 },
@@ -377,34 +377,6 @@ function initializeEmptyCharts() {
             },
         });
     });
-
- /*    const radarCanvas = document.createElement('canvas');
-    radarCanvas.id = 'radar-chart';
-    chartsContainer.appendChild(radarCanvas)
-
-    const radarCtx = radarCanvas.getContext('2d');
-    charts['radar'] = new Chart(radarCtx, {
-        type: 'radar',
-        data:{
-            labels: dataKeys,
-            datasets:[{
-                label: 'Overview',
-                data: [0],
-                backgroundColor: 'rgba(7, 210, 20, 0.95)',
-                borderColor: 'rgb(227, 9, 9)',
-                borderWidth: 1,
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                r: {suggestedMin: 0, suggestedMax: 100}
-            },
-            plugins:{
-                legend: {labels: {font: {size: 20}}}
-            }
-        }
-     });*/
 }
 
 
@@ -470,13 +442,7 @@ function updateCharts(payload) {
                 },
             },
         });
-    });
-
-    //if (charts['radar']){
-    //    charts['radar'].data.datasets[0].data = [40, 50, 60, 30, 10, 80];
-    //    charts['radar'].update();
-    //}      
-
+    });     
 }
 
 function displayErrorTable(machine, errorsArray = []) {
@@ -551,7 +517,7 @@ function initializeRadarChart() {
     const radarData = {
         labels: ["Power", "Flow", "forwardTemperature", "returnTemperature"],
         datasets: [{
-            label: "Overview",
+            label: "Payload",
             data: [0, 0, 0, 0],
             fill: true,
             backgroundColor: "rgba(54, 162, 235, 0.2)",
@@ -580,7 +546,7 @@ function updateRadarChart(payloadData){
     let radarData = [];
 
     Object.entries(payloadData).forEach(([key, value])=>{
-        if(chartKeys.includes(key)){
+        if(radarChartKeys.includes(key)){
             radarData.push(value);
         }
     });
