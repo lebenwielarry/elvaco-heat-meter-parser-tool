@@ -549,10 +549,10 @@ function initializeRadarChart() {
     const radarCtx = radarCanvas.getContext("2d");
 
     const radarData = {
-        labels: ["Energy", "Volume", "Power", "Flow", "forwardTemperature", "returnTemperature"],
+        labels: ["Power", "Flow", "forwardTemperature", "returnTemperature"],
         datasets: [{
             label: "Overview",
-            data: [0, 0, 0, 0, 0, 0],
+            data: [0, 0, 0, 0],
             fill: true,
             backgroundColor: "rgba(54, 162, 235, 0.2)",
             borderColor: "rgba(54, 162, 235, 1)",
