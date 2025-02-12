@@ -1,0 +1,16 @@
+{
+  "name": "parser_uh50_burak",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Parser for webapp",
+  "main": "src/index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "start": "node ui/parser/index.js",
+    "test": "jest"
+  },
+  "author": "Burak Ertan",
+  "license": "ISC"
+  }
