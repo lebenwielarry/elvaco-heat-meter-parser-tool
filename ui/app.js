@@ -24,7 +24,7 @@ const radarChartKeys = ['power', 'flow', 'forwardTemperature', 'returnTemperatur
 const fixedAxisRanges = {
     energy: { min: 0, max: 550 }, 
     volume: { min: 0, max: 5000 },
-    power: { min: 0, max: 110 },
+    power: { min: 0, max: 200 },
     flow: { min: 0, max: 6 },
     forwardTemperature: { min: 0, max: 120 },
     returnTemperature: { min: 0, max: 120 },
