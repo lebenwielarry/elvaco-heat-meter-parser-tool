@@ -20,6 +20,7 @@ Chart.register({
     }
 });
 const charts = {}; // Speicher für alle Diagramme
+
 let radarChart;
 
 const chartKeys = ['energy', 'volume', 'power', 'flow', 'forwardTemperature', 'returnTemperature'];
@@ -38,21 +39,21 @@ const keyMap = {
 };
 
 const fixedAxisRanges = {
-    energy: { min: 0, max: 5000 }, 
+    energy: { min: 0, max: 500 }, 
     volume: { min: 0, max: 500 },
-    power: { min: 0, max: 200 },
+    power: { min: 0, max: 100 },
     flow: { min: 0, max: 6 },
     forwardTemperature: { min: 0, max: 120 },
     returnTemperature: { min: 0, max: 120 },
 };
 
 const plausibleRanges = {
-    energy: [50, 1000], // Beispielbereich für Energie
-    volume: [100, 1000],
-    power: [10, 180],
+    energy: [50, 250], // Beispielbereich für Energie
+    volume: [100, 250],
+    power: [10, 80],
     flow: [0.1, 5],
-    forwardTemperature: [0, 100],
-    returnTemperature: [0, 100],
+    forwardTemperature: [50, 100],
+    returnTemperature: [0, 70],
 };
 
 const units = {
@@ -555,9 +556,9 @@ function initializeRadarChart() {
             label: "Payload",
             data: [0, 0, 0, 0],
             fill: true,
-            backgroundColor: "rgba(54, 162, 235, 0.2)",
-            borderColor: "rgba(54, 162, 235, 1)",
-            pointBackgroundColor: "rgba(54, 162, 235, 1)",
+            backgroundColor: "rgba(75, 192, 192, 0.5)",
+            borderColor: "rgb(75, 192, 192)",
+            pointBackgroundColor: "rgba(75, 192, 192, 1)",
         }]
     };
 

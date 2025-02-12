@@ -1,4 +1,4 @@
-/* module.exports = function (payload, meta) {
+/*module.exports = function (payload, meta) {
   const result = parserForUH30(payload, meta);
   return result;
 }; */
