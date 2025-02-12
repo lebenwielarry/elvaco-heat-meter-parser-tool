@@ -1117,7 +1117,7 @@ function parseMonitoringMessage(payload) {
 }
 
 
-function parserForUH30(payload) {
+export function parserForUH30(payload) {
   const messageFormat = payload.substr(0, 2)
 
   switch (messageFormat) {
@@ -1177,7 +1177,7 @@ const meter_communication_error_payload = "053406FFFFFFFF3414FFFFFFFF322DFFFF323
 //meter_comm_error_test = parserForUH30(meter_communication_error_payload)
 //console.log(meter_comm_error_test)
 
-module.exports = {
+/* module.exports = {
   parserForUH30,
   scaleEnergy,
   scaleFlow,
@@ -1192,5 +1192,5 @@ module.exports = {
   scalePreviousMonthEnergy,
   analyseError,
   checkMeterCommunicationError
-};
+}; */
 
