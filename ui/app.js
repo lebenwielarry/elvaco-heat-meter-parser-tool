@@ -1,7 +1,11 @@
 import { parseUH50 } from './parser/uh50_burak/parser.js';
-import('./parser/uh30_annalena/uh30.js').then((module) => {
-    const { parserForUH30 } = module;
-});
+import('./parser/uh30_annalena/uh30.js')
+    .then((module) => {
+        console.log(module); // Check structure
+        const parserForUH30 = module.default?.parserForUH30 || module.parserForUH30;
+        parserForUH30();
+    })
+    .catch((error) => console.error('Error loading module:', error));
 
 Chart.register({
     id: 'backgroundColorPlugin',
