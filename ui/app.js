@@ -1,4 +1,5 @@
 import { parseUH50 } from './parser/uh50_burak/parser.js';
+import {parserForUH30} from './parser/uh30_annalena/uh30.js';
 
 Chart.register({
     id: 'backgroundColorPlugin',
@@ -174,10 +175,16 @@ document.getElementById('plausibility-check-btn').addEventListener('click', () =
 });
 
 // Funktion zur Verarbeitung des Payloads
-function processPayload(payload) {
+function processPayload(payload, parserType) {
     try {
-        // Parse the payload using the selected parser
-        const result = parseUH50(payload); // Replace with the appropriate parser for the selected machine
+        let result; 
+        if (parserType == 'UH_50'){
+            result = parseUH50(payload);
+        }else if (parserType == 'UH30'){
+            result = parserForUH30(payload);
+        }else{
+            throw new Error('Ungültiger Parser Typ');
+        }
 
         // Update the details table and charts
         displayPayloadDetails(result);
