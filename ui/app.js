@@ -1,5 +1,5 @@
 import { parseUH50 } from './parser/uh50_burak/parser.js';
-import { parserForUH30 } from './parser/uh30_annalena/uh30.js';
+import { parserForUH30 } from 'ui/parser/uh30_annalena/uh30.js';
 
 Chart.register({
     id: 'backgroundColorPlugin',
