@@ -160,7 +160,7 @@ document.getElementById('process-parser').addEventListener('click', () => {
     }
 
     // Call processPayload to handle parsing and table/chart updates
-    processPayload(hexInput);
+    processPayload(hexInput, selectedParser);
 });
 
 // Event Listener für "Plausibility Check"-Button
@@ -180,7 +180,7 @@ function processPayload(payload, parserType) {
         let result; 
         if (parserType == 'UH_50'){
             result = parseUH50(payload);
-        }else if (parserType == 'UH30'){
+        }else if (parserType == 'UH_30'){
             result = parserForUH30(payload);
         }else{
             throw new Error('Ungültiger Parser Typ');
