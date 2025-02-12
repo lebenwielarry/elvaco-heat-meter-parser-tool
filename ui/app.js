@@ -60,7 +60,7 @@ const errorTables = {
         { bitNo: 14, decimalValue: '-', identifier: '-', explanation: 'Always 0' },
         { bitNo: 15, decimalValue: '-', identifier: '-', explanation: 'Always 0' },
     ],
-    // Andere Maschinen können hier hinzugefügt werden
+    // Andere Parser Errortabellen können hier hinzugefügt werden
     UH_30: [
         { bitNo: 31, decimalValue: 0, identifier: 'F.0', explanation: 'No flow can be measured (F0)' },
         { bitNo: 30, decimalValue: 0, identifier: 'F.1', explanation: 'Interruption in the hot side temperature sensor (F1)' },
