@@ -1,4 +1,4 @@
-import { parseUH50 } from './parser/parser.js';
+import { parseUH50 } from './parser/uh50_burak/parser.js';
 
 Chart.register({
     id: 'backgroundColorPlugin',
