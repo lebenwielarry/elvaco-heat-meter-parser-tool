@@ -1,5 +1,4 @@
 import { parseUH50 } from './parser/uh50_burak/parser.js';
-import {parserForUH30} from './parser/uh30_annalena/uh30.js';
 
 Chart.register({
     id: 'backgroundColorPlugin',
@@ -23,7 +22,7 @@ let radarChart;
 const chartKeys = ['energy', 'volume', 'power', 'flow', 'forwardTemperature', 'returnTemperature'];
 const radarChartKeys = ['power', 'flow', 'forwardTemperature', 'returnTemperature'];
 const fixedAxisRanges = {
-    energy: { min: 0, max: 5000}, 
+    energy: { min: 0, max: 250000 }, 
     volume: { min: 0, max: 150000 },
     power: { min: 0, max: 200 },
     flow: { min: 0, max: 6 },
@@ -86,7 +85,6 @@ const errorTables = {
     Sharky: [],
     Itron: [],
 };
-
 const plausibleRanges = {
     energy: [50, 5000], // Beispielbereich für Energie
     volume: [100, 100000],
@@ -120,7 +118,7 @@ function resetPage() {
     const selectedParser = document.getElementById('parser-select').value;
 
     // "Verarbeiten"-Button aktivieren oder deaktivieren
-    document.getElementById('process-parser').disabled = !selectedParser;
+    document.getElementById('process-uh50').disabled = !selectedParser;
 
     // "Plausibility Check"-Button immer deaktivieren (bis Verarbeitung erfolgt)
     document.getElementById('plausibility-check-btn').disabled = true;
@@ -135,7 +133,7 @@ document.getElementById('parser-select').addEventListener('change', (event) => {
 
     // Reset the page to clear previous data
     resetPage();
-    document.getElementById('parser-input').disabled = false;
+    document.getElementById('uh50-input').disabled = false;
 
     // Update the error table with no active errors
     if (selectedParser) {
@@ -144,13 +142,13 @@ document.getElementById('parser-select').addEventListener('change', (event) => {
 });
 
 // Event Listener für "Verarbeiten"-Button
-document.getElementById('process-parser').addEventListener('click', () => {
-    const hexInput = document.getElementById('parser-input').value.trim();
+document.getElementById('process-uh50').addEventListener('click', () => {
+    const hexInput = document.getElementById('uh50-input').value.trim();
     const selectedParser = document.getElementById('parser-select').value;
 
     // Check if a machine is selected
     if (!selectedParser) {
-        alert('Bitte einen Parser auswählen, bevor der Payload verarbeitet wird!');
+        alert('Bitte eine Maschine auswählen, bevor der Payload verarbeitet wird!');
         return;
     }
 
