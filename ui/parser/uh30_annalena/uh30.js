@@ -1117,7 +1117,7 @@ function parseMonitoringMessage(payload) {
 }
 
 
-export function parserForUH30(payload) {
+function parserForUH30(payload) {
   const messageFormat = payload.substr(0, 2)
 
   switch (messageFormat) {
