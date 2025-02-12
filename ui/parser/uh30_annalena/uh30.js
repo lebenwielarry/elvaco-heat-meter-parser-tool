@@ -1117,7 +1117,7 @@ module.exports = function (payload, meta) {
   }
   
   
-  function parserForUH30(payload) {
+  export function parserForUH30(payload) {
     const messageFormat = payload.substr(0, 2)
   
     switch (messageFormat) {
@@ -1193,3 +1193,5 @@ module.exports = function (payload, meta) {
     analyseError,
     checkMeterCommunicationError
   };
+
+  
