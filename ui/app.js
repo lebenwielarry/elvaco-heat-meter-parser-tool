@@ -1,5 +1,6 @@
 import { parseUH50 } from './parser/uh50_burak/parser.js';
-import { parserForUH30 } from 'ui/parser/uh30_annalena/uh30.js';
+import { parserForUH30 } from "./parser/uh30_annalena/uh30.js";
+
 
 Chart.register({
     id: 'backgroundColorPlugin',
@@ -25,14 +26,35 @@ const chartKeys = ['energy', 'volume', 'power', 'flow', 'forwardTemperature', 'r
 
 const radarChartKeys = ['power', 'flow', 'forwardTemperature', 'returnTemperature'];
 
+// Map to replace the keys of UH30 to match those of UH50
+const keyMap = {
+    payload_style: 'messageType',
+    energy_mwh: 'energy',
+    volume_m3: 'volume',
+    power_kw: 'power',
+    flow_m3h: 'flow',
+    fw_temp_c: 'forwardTemperature',
+    rt_temp_c: 'returnTemperature'
+};
+
 const fixedAxisRanges = {
     energy: { min: 0, max: 5000 }, 
-    volume: { min: 0, max: 150000 },
+    volume: { min: 0, max: 500 },
     power: { min: 0, max: 200 },
     flow: { min: 0, max: 6 },
     forwardTemperature: { min: 0, max: 120 },
     returnTemperature: { min: 0, max: 120 },
 };
+
+const plausibleRanges = {
+    energy: [50, 1000], // Beispielbereich für Energie
+    volume: [100, 1000],
+    power: [10, 180],
+    flow: [0.1, 5],
+    forwardTemperature: [0, 100],
+    returnTemperature: [0, 100],
+};
+
 const units = {
     energy: 'MWh',
     volume: 'm³',
@@ -89,14 +111,7 @@ const errorTables = {
     Sharky: [],
     Itron: [],
 };
-const plausibleRanges = {
-    energy: [50, 4000], // Beispielbereich für Energie
-    volume: [100, 100000],
-    power: [10, 180],
-    flow: [0.1, 5],
-    forwardTemperature: [0, 100],
-    returnTemperature: [0, 100],
-};
+
 
 // Globale Variable, um zu verfolgen, ob der Verarbeiten-Button gedrückt wurde
 let isProcessed = false;
@@ -182,11 +197,20 @@ document.getElementById('plausibility-check-btn').addEventListener('click', () =
 function processPayload(payload, parserType) {
     try {
         let result; 
+        
         if (parserType == 'UH_50'){
             result = parseUH50(payload);
-        }else if (parserType == 'UH_30'){
-            result = parserForUH30(payload);
-        }else{
+            console.log("Result UH50 " + result);
+        }
+        else if (parserType == 'UH_30'){
+            let data = parserForUH30(payload);
+            result = Object.keys(data).reduce((acc, key) => {
+                const newKey = keyMap[key] || key;
+                acc[newKey] = data[key];
+                return acc;
+              }, {});
+            console.log("Result UH30" + result);
+        }else {
             throw new Error('Ungültiger Parser Typ');
         }
 

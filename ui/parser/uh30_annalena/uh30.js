@@ -1,7 +1,7 @@
-module.exports = function (payload, meta) {
+/* module.exports = function (payload, meta) {
   const result = parserForUH30(payload, meta);
   return result;
-};
+}; */
 
 function scaleEnergy(energyPrefix, rawEnergyValue) {
     // Lookup map for prefix and corresponding factor and multiplier
@@ -348,7 +348,7 @@ function parseStandardMesssage(payload) {
   powerValueRawDecimal = parseInt(powerValueRawReversed, 16);
   powerValueTransformed = scalePower(powerPrefix, powerValueRawDecimal);
   
-  result.power_kwh = powerValueTransformed;
+  result.power_kw = powerValueTransformed;
 
 
   //DIB 4 Flow
@@ -1019,7 +1019,7 @@ function parseMonitoringMessage(payload) {
   powerValueRawDecimal = parseInt(powerValueRawReversed, 16);
   powerValueTransformed = scalePower(powerPrefix, powerValueRawDecimal);
   
-  result.power_kwh = powerValueTransformed;
+  result.power_kw = powerValueTransformed;
 
   //DIB 4 Flow
   let flowPrefix = payload.slice(34, 38);
@@ -1177,7 +1177,7 @@ const meter_communication_error_payload = "053406FFFFFFFF3414FFFFFFFF322DFFFF323
 //meter_comm_error_test = parserForUH30(meter_communication_error_payload)
 //console.log(meter_comm_error_test)
 
-export {
+/* module.exports = {
   parserForUH30,
   scaleEnergy,
   scaleFlow,
@@ -1192,5 +1192,26 @@ export {
   scalePreviousMonthEnergy,
   analyseError,
   checkMeterCommunicationError
-};
+}; */
+
+if (typeof module !== "undefined" && typeof module.exports !== "undefined") {
+  module.exports = {
+    parserForUH30,
+    scaleEnergy,
+    scaleFlow,
+    scaleFwTemp,
+    scaleRtTemp,
+    scaleCoolingEnergy,
+    scaleEnergyInWrongMountingPosition,
+    scaleMaxFwTemp,
+    scaleMaxRtTemp,
+    scalePower,
+    scaleVolume,
+    scalePreviousMonthEnergy,
+    analyseError,
+    checkMeterCommunicationError
+  };
+}
+
+export {parserForUH30};
 
