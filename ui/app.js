@@ -20,8 +20,11 @@ Chart.register({
 });
 const charts = {}; // Speicher für alle Diagramme
 let radarChart;
+
 const chartKeys = ['energy', 'volume', 'power', 'flow', 'forwardTemperature', 'returnTemperature'];
+
 const radarChartKeys = ['power', 'flow', 'forwardTemperature', 'returnTemperature'];
+
 const fixedAxisRanges = {
     energy: { min: 0, max: 5000 }, 
     volume: { min: 0, max: 150000 },
@@ -146,10 +149,11 @@ document.getElementById('parser-select').addEventListener('change', (event) => {
 document.getElementById('process-parser').addEventListener('click', () => {
     const hexInput = document.getElementById('parser-input').value.trim();
     const selectedParser = document.getElementById('parser-select').value;
+    console.log("Selected Parser:" + selectedParser);
 
     // Check if a machine is selected
     if (!selectedParser) {
-        alert('Bitte eine Maschine auswählen, bevor der Payload verarbeitet wird!');
+        alert('Bitte einen Parser auswählen, bevor der Payload verarbeitet wird!');
         return;
     }
 
