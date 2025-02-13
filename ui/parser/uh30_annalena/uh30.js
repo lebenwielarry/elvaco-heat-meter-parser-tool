@@ -1,7 +1,26 @@
 /*module.exports = function (payload, meta) {
   const result = parserForUH30(payload, meta);
   return result;
-}; */
+};*/
+
+function hex2bin(hex){
+  return parseInt(hex, 16).toString(2).padStart(32, '0');
+}
+
+
+//Function to calculate the decimal value for the hex string
+function hexToSignedInt(hex) {
+  if (hex.length % 2 != 0) {
+      hex = "0" + hex;
+  }
+  var num = parseInt(hex, 16);
+  var maxVal = Math.pow(2, hex.length / 2 * 8);
+  if (num > maxVal / 2 - 1) {
+      num = num - maxVal
+  }
+  return num;
+}
+
 
 function scaleEnergy(energyPrefix, rawEnergyValue) {
     // Lookup map for prefix and corresponding factor and multiplier
@@ -247,47 +266,55 @@ function scaleMaxRtTemp(max_RtTempPrefix, max_RtTempRawDecimal){
 
 function analyseError(errorBits){
   const errorAnalysisMap = {
-    '00000000': {bit:  0, name: "ZZ.7", errorMessage: "Time Error DSMR"},
-    '00000001': {bit:  1, name: "ZZ.6", errorMessage: "Leakage warning (water meters)"},
-    '00000010': {bit:  2, name: "ZZ.5", errorMessage: "-"},
-    '00000011': {bit:  3, name: "ZZ.4", errorMessage: "-"}, 
-    '00000100': {bit:  4, name: "ZZ.3", errorMessage: "-"},
-    '00000101': {bit:  5, name: "ZZ.2", errorMessage: "-"},
-    '00000110': {bit:  6, name: "ZZ.1", errorMessage: "-"},
-    '00000111': {bit:  7, name: "ZZ.0", errorMessage: "-"},
-    '00001000': {bit:  8, name: "A.3",  errorMessage: "0 = Installation in return flow position, 1 = Installation in forward flow position"},
-    '00001001': {bit:  9, name: "A.2",  errorMessage: "-"},
-    '00001010': {bit: 10, name: "A.1",  errorMessage: "Incorrect flow direction (Flow-Negative)"},
-    '00001011': {bit: 11, name: "A.0",  errorMessage: "Negative temperature difference (Difference-Negative)"},
-    '00001100': {bit: 12, name: "B.3",  errorMessage: "Installation error volume measurement part"},
-    '00001101': {bit: 13, name: "B.2",  errorMessage: "Installation error sensor"},
-    '00001110': {bit: 14, name: "B.1",  errorMessage: "F4 pre-warning"},
-    '00001111': {bit: 15, name: "B.0",  errorMessage: "F0 pre-warning"},
-    '00010000': {bit: 16, name: "C.3",  errorMessage: "-"},
-    '00010001': {bit: 17, name: "C.2",  errorMessage: "-"},
-      '00010010': {bit: 18, name: "C.1",  errorMessage: "-"},
-    '00010011': {bit: 19, name: "C.0",  errorMessage: "0 = Installation location cannot be changed when calibration seal is set, 1 = Installation location can be set when calibrat"},
-    '00010100': {bit: 20, name: "D.3",  errorMessage: "0 = Amount of energy in case of incorrect installation, 1 = Amount of cooling energy"},
-    '00010101': {bit: 21, name: "D.2",  errorMessage: "Reserved"},
-    '00010110': {bit: 22, name: "D.1",  errorMessage: "Fault in the electronics (F9)"},
-    '00010111': {bit: 23, name: "D.0",  errorMessage: "Error F1, F2, F3, F5 or F6 for longer than 8 hours, recognition of attempts to manipulate. No further measurements are carried out (F8)"},
-    '00011000': {bit: 24, name: "E.3",  errorMessage: "Fault in internal memory holding (EEPROM) (F7)"},
-    '00011001': {bit: 25, name: "E.2",  errorMessage: "Short-circuit return flow temperature sensor (F6)"},
-    '00011010': {bit: 26, name: "E.1",  errorMessage: "Short-circuit forward flow temperature sensor (F5)"},
-    '00011011': {bit: 27, name: "E.0",  errorMessage: "Problem with power supply; Battery empty (F4)"},
-    '00011100': {bit: 28, name: "F.3",  errorMessage: "Electronics for temperature evaluation defective (F3)"},
-    '00011101': {bit: 29, name: "F.2",  errorMessage: "Interruption in the cold side temperature sensor (F2)"},
-    '00011110': {bit: 30, name: "F.1",  errorMessage: "Interruption in the hot side temperature sensor (F1)"},
-    '00011111': {bit: 31, name: "F.0",  errorMessage: "No flow can be measured (F0)"},
+    0: { name: "ZZ.7", errorMessage: "Time Error DSMR" },
+    1: { name: "ZZ.6", errorMessage: "Leakage warning (water meters)" },
+    2: { name: "ZZ.5", errorMessage: "-" },
+    3: { name: "ZZ.4", errorMessage: "-" },
+    4: { name: "ZZ.3", errorMessage: "-" },
+    5: { name: "ZZ.2", errorMessage: "-" },
+    6: { name: "ZZ.1", errorMessage: "-" },
+    7: { name: "ZZ.0", errorMessage: "-" },
+    8: { name: "A.3", errorMessage: "Installation in return/forward flow position" },
+    9: { name: "A.2", errorMessage: "-" },
+    10: { name: "A.1", errorMessage: "Incorrect flow direction (Flow-Negative)" },
+    11: { name: "A.0", errorMessage: "Negative temperature difference (Difference-Negative)" },
+    12: { name: "B.3", errorMessage: "Installation error volume measurement part" },
+    13: { name: "B.2", errorMessage: "Installation error sensor" },
+    14: { name: "B.1", errorMessage: "F4 pre-warning" },
+    15: { name: "B.0", errorMessage: "F0 pre-warning" },
+    16: { name: "C.3", errorMessage: "-" },
+    17: { name: "C.2", errorMessage: "-" },
+    18: { name: "C.1", errorMessage: "-" },
+    19: { name: "C.0", errorMessage: "Installation location change restriction" },
+    20: { name: "D.3", errorMessage: "Amount of energy in case of incorrect installation" },
+    21: { name: "D.2", errorMessage: "Reserved" },
+    22: { name: "D.1", errorMessage: "Fault in the electronics (F9)" },
+    23: { name: "D.0", errorMessage: "Serious error, no further measurements (F8)" },
+    24: { name: "E.3", errorMessage: "Fault in internal memory (EEPROM) (F7)" },
+    25: { name: "E.2", errorMessage: "Short-circuit return flow temp sensor (F6)" },
+    26: { name: "E.1", errorMessage: "Short-circuit forward flow temp sensor (F5)" },
+    27: { name: "E.0", errorMessage: "Power supply problem, battery empty (F4)" },
+    28: { name: "F.3", errorMessage: "Electronics for temperature evaluation defective (F3)" },
+    29: { name: "F.2", errorMessage: "Interruption in the cold side temp sensor (F2)" },
+    30: { name: "F.1", errorMessage: "Interruption in the hot side temp sensor (F1)" },
+    31: { name: "F.0", errorMessage: "No flow can be measured (F0)" }
   };
+  
+  let activeErrors = [];
+  let binaryString = hex2bin(errorBits);
 
-  return errorAnalysisMap[errorBits];
+  for (let i = 0; i < 32; i++) {
+    if (binaryString[31 - i] === '1') { 
+      activeErrors.push(errorAnalysisMap[i].name);
+    }
+  }
+  return activeErrors.length > 0 ? activeErrors : [];
 }
 
 function checkMeterCommunicationError(difPrefix){
 
   const meterCommunicationErrorBits = ['32', '34', '35', '3C', 'B4'];
-  
+ 
   if (meterCommunicationErrorBits.includes(difPrefix)){
     throw new Error ("Meter Communication Error");
   }
@@ -311,7 +338,7 @@ function parseStandardMesssage(payload) {
 
   energyValueRaw = payload.slice(6, 14);
   energyValueRawReversed = energyValueRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  energyValueRawDecimal = parseInt(energyValueRawReversed, 16);
+  energyValueRawDecimal = hexToSignedInt(energyValueRawReversed);
   energyValueTransformed = scaleEnergy(energyPrefix, energyValueRawDecimal);
   
   result.energy_mwh = energyValueTransformed;
@@ -328,7 +355,7 @@ function parseStandardMesssage(payload) {
 
   volumeValueRaw = payload.slice(18, 26);
   volumeValueReversed = volumeValueRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  volumeValueDecimal = parseInt(volumeValueReversed, 16);
+  volumeValueDecimal = hexToSignedInt(volumeValueReversed);
   volumeValueTransformed = scaleVolume(volumePrefix, volumeValueDecimal);
   
   result.volume_m3 = volumeValueTransformed;
@@ -345,7 +372,7 @@ function parseStandardMesssage(payload) {
 
   powerValueRaw = payload.slice(30, 34);
   powerValueRawReversed = powerValueRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  powerValueRawDecimal = parseInt(powerValueRawReversed, 16);
+  powerValueRawDecimal = hexToSignedInt(powerValueRawReversed);
   powerValueTransformed = scalePower(powerPrefix, powerValueRawDecimal);
   
   result.power_kw = powerValueTransformed;
@@ -362,9 +389,9 @@ function parseStandardMesssage(payload) {
 
   flowValueRaw = payload.slice(38, 42);
   flowValueRawReversed = flowValueRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  flowValueRawDecimal = parseInt(flowValueRawReversed, 16);
+  flowValueRawDecimal = hexToSignedInt(flowValueRawReversed);
   flowValueTransformed = scaleFlow(flowPrefix, flowValueRawDecimal);
-  
+ 
   result.flow_m3h = flowValueTransformed;
   
 
@@ -379,7 +406,7 @@ function parseStandardMesssage(payload) {
 
   fw_tempRaw = payload.slice(46, 50);
   fw_tempRawReversed = fw_tempRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  fw_tempRawDecimal = parseInt(fw_tempRawReversed, 16);
+  fw_tempRawDecimal = hexToSignedInt(fw_tempRawReversed);
   fw_tempTransformed = scaleFwTemp(fw_tempPrefix, fw_tempRawDecimal);
   
   result.fw_temp_c = fw_tempTransformed;
@@ -396,7 +423,7 @@ function parseStandardMesssage(payload) {
 
   rt_tempRaw = payload.slice(54, 58);
   rt_tempRawReversed = rt_tempRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  rt_tempRawDecimal = parseInt(rt_tempRawReversed, 16);
+  rt_tempRawDecimal = hexToSignedInt(rt_tempRawReversed);
   rt_tempTransformed = scaleRtTemp(rt_tempPrefix, rt_tempRawDecimal);
   
   result.rt_temp_c = rt_tempTransformed;
@@ -444,7 +471,7 @@ function parseCompactMessage(payload) {
 
   energyValueRaw = payload.slice(6, 14);
   energyValueRawReversed = energyValueRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  energyValueRawDecimal = parseInt(energyValueRawReversed, 16);
+  energyValueRawDecimal = hexToSignedInt(energyValueRawReversed);
   energyValueTransformed = scaleEnergy(energyPrefix, energyValueRawDecimal);
   
   result.energy_mwh = energyValueTransformed;
@@ -507,14 +534,13 @@ function parseClockMessage(payload) {
     const time = payload.slice(7,13);
   
   
-  
   } else if(date_timePrefix == "346D"){
 
   }else {
     throw new Error("Invalid date/time message");
   }
 
-
+  return result;
 }
 
 function parseScheduledDailyRedundantMessage(payload) {
@@ -535,7 +561,7 @@ function parseScheduledDailyRedundantMessage(payload) {
 
   energyValueRaw = payload.slice(6, 14);
   energyValueRawReversed = energyValueRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  energyValueRawDecimal = parseInt(energyValueRawReversed, 16);
+  energyValueRawDecimal = hexToSignedInt(energyValueRawReversed);
   energyValueTransformed = scaleEnergy(energyPrefix, energyValueRawDecimal);
   
   result.energy_mwh = energyValueTransformed;
@@ -552,7 +578,7 @@ function parseScheduledDailyRedundantMessage(payload) {
 
   volumeValueRaw = payload.slice(18, 26);
   volumeValueReversed = volumeValueRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  volumeValueDecimal = parseInt(volumeValueReversed, 16);
+  volumeValueDecimal = hexToSignedInt(volumeValueReversed);
   volumeValueTransformed = scaleVolume(volumePrefix, volumeValueDecimal);
   
   result.volume_m3 = volumeValueTransformed;
@@ -584,15 +610,15 @@ function parseScheduledDailyRedundantMessage(payload) {
   let meterDateTime = payload.slice(48, 56);
   let meterDateTimeReversed = meterDateTime.match(/[a-fA-F0-9]{2}/g).reverse().join('');
 
-  const minute = parseInt(meterDateTimeReversed.slice(0, 6));
-  const reservedForFutureUse = parseInt(meterDateTimeReversed.slice(6, 7));
-  const errorFlag = parseInt(meterDateTimeReversed.slice(7, 8));
-  const hour = parseInt(meterDateTimeReversed.slice(8, 13));
-  const summertimeFlag = parseInt(meterDateTimeReversed.slice(15, 16));
-  const day = parseInt(meterDateTimeReversed.slice(16, 21));
-  const yearLow = parseInt(meterDateTimeReversed.slice(21, 24));
-  const month = parseInt(meterDateTimeReversed.slice(24, 28));
-  const yearHigh = parseInt(meterDateTimeReversed.slice(28, 32));
+  const minute = hexToSignedInt(meterDateTimeReversed.slice(0, 6));
+  const reservedForFutureUse = hexToSignedInt(meterDateTimeReversed.slice(6, 7));
+  const errorFlag = hexToSignedInt(meterDateTimeReversed.slice(7, 8));
+  const hour = hexToSignedInt(meterDateTimeReversed.slice(8, 13));
+  const summertimeFlag = hexToSignedInt(meterDateTimeReversed.slice(15, 16));
+  const day = hexToSignedInt(meterDateTimeReversed.slice(16, 21));
+  const yearLow = hexToSignedInt(meterDateTimeReversed.slice(21, 24));
+  const month = hexToSignedInt(meterDateTimeReversed.slice(24, 28));
+  const yearHigh = hexToSignedInt(meterDateTimeReversed.slice(28, 32));
   //Combine Year? Page 16 in Manual
 
   // DIB 6: Accumulated Energy at 24:00
@@ -606,7 +632,7 @@ function parseScheduledDailyRedundantMessage(payload) {
 
   energyValueRaw24 = payload.slice(6, 14);
   energyValueRawReversed24 = energyValueRaw24.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  energyValueRawDecimal24 = parseInt(energyValueRawReversed24, 16);
+  energyValueRawDecimal24 = hexToSignedInt(energyValueRawReversed24);
   energyValueTransformed24 = scaleEnergy(energyPrefix24, energyValueRawDecimal24);
   
   result.energy_mwh_24 = energyValueTransformed24;
@@ -634,7 +660,7 @@ function parseScheduledExtendedMessage(payload) {
 
   energyValueRaw = payload.slice(6, 14);
   energyValueRawReversed = energyValueRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  energyValueRawDecimal = parseInt(energyValueRawReversed, 16);
+  energyValueRawDecimal = hexToSignedInt(energyValueRawReversed);
   energyValueTransformed = scaleEnergy(energyPrefix, energyValueRawDecimal);
   
   result.energy_mwh = energyValueTransformed;
@@ -651,7 +677,7 @@ function parseScheduledExtendedMessage(payload) {
 
   volumeValueRaw = payload.slice(18, 26);
   volumeValueReversed = volumeValueRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  volumeValueDecimal = parseInt(volumeValueReversed, 16);
+  volumeValueDecimal = hexToSignedInt(volumeValueReversed);
 
   volumeValueTransformed = scaleVolume(volumePrefix, volumeValueDecimal);
   result.volume_m3 = volumeValueTransformed;
@@ -664,7 +690,7 @@ function parseScheduledExtendedMessage(payload) {
       throw new Error ("Unknown DIFVIF codes");
     }
   const powerFlowScaling = totalValue.slice(6, 7);
-  const powerFlowScalingBinary = parseInt(powerFlowScaling,16).toString(2);
+  const powerFlowScalingBinary = hexToSignedInt(powerFlowScaling).toString(2);
   // const n = 
   // const m ??????
   const fwTemp = totalValue.slice(3, 5);
@@ -691,7 +717,7 @@ function parseCombinedHeatCoolingMessage(payload) {
 
   heatEnergyRaw = payload.slice(6, 14);
   heatEnergyRawReversed = heatEnergyRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  heatEnergyRawDecimal = parseInt(heatEnergyRawReversed, 16);
+  heatEnergyRawDecimal = hexToSignedInt(heatEnergyRawReversed);
   heatEnergyTransformed = scaleEnergy(heatEnergyPrefix, heatEnergyRawDecimal);
   
   result.heat_energy_wmh = heatEnergyTransformed;
@@ -707,7 +733,7 @@ function parseCombinedHeatCoolingMessage(payload) {
 
   coolingEnergyRaw = payload.slice(22, 30);
   coolingEnergyRawReversed = coolingEnergyRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  coolingEnergyRawDecimal = parseInt(coolingEnergyRawReversed, 16);
+  coolingEnergyRawDecimal = hexToSignedInt(coolingEnergyRawReversed);
   coolingEnergyTransformed = scaleCoolingEnergy(coolingEnergyPrefix, coolingEnergyRawDecimal);
   
   result.cooling_energy_mwh = coolingEnergyTransformed;
@@ -724,7 +750,7 @@ function parseCombinedHeatCoolingMessage(payload) {
 
   volumeValueRaw = payload.slice(34, 42);
   volumeValueReversed = volumeValueRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  volumeValueDecimal = parseInt(volumeValueReversed, 16);
+  volumeValueDecimal = hexToSignedInt(volumeValueReversed);
   volumeValueTransformed = scaleVolume(volumePrefix, volumeValueDecimal);
   
   result.volume_m3 = volumeValueTransformed;
@@ -741,7 +767,7 @@ function parseCombinedHeatCoolingMessage(payload) {
 
   fw_tempRaw = payload.slice(46, 50);
   fw_tempRawReversed = fw_tempRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  fw_tempRawDecimal = parseInt(fw_tempRawReversed, 16);
+  fw_tempRawDecimal = hexToSignedInt(fw_tempRawReversed);
   fw_tempTransformed = scaleFwTemp(fw_tempPrefix, fw_tempRawDecimal);
 
   result.fw_temp_c = fw_tempTransformed;
@@ -758,7 +784,7 @@ function parseCombinedHeatCoolingMessage(payload) {
 
   rt_tempRaw = payload.slice(54, 58);
   rt_tempRawReversed = rt_tempRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  rt_tempRawDecimal = parseInt(rt_tempRawReversed, 16);
+  rt_tempRawDecimal = hexToSignedInt(rt_tempRawReversed);
   rt_tempTransformed = scaleRtTemp(rt_tempPrefix, rt_tempRawDecimal);
   
   result.rt_temp_c = rt_tempTransformed;
@@ -805,7 +831,7 @@ function parseSimpleBillingMessage(payload) {
 
   energyValueRaw = payload.slice(6, 14);
   energyValueRawReversed = energyValueRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  energyValueRawDecimal = parseInt(energyValueRawReversed, 16);
+  energyValueRawDecimal = hexToSignedInt(energyValueRawReversed);
   energyValueTransformed = scaleEnergy(energyPrefix, energyValueRawDecimal);
   
   result.energy_mwh = energyValueTransformed;
@@ -838,7 +864,7 @@ function parseSimpleBillingMessage(payload) {
 
   let energyInWrongMountingPositionRaw = payload.slice(48, 56);
   let energyInWrongMountingPositionReversed = energyInWrongMountingPositionRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  let energyInWrongMountingPositionDecimal = parseInt(energyInWrongMountingPositionReversed, 16);
+  let energyInWrongMountingPositionDecimal = hexToSignedInt(energyInWrongMountingPositionReversed);
   let energyInWrongMountingPositionTransformed = scaleEnergyInWrongMountingPosition(energyInWrongMountingPositionPrefix, energyInWrongMountingPositionDecimal);
   
   result.energy_wrong_mounting_position_mwh = energyInWrongMountingPositionTransformed;
@@ -851,7 +877,7 @@ function parseSimpleBillingMessage(payload) {
 
   let previousMonthEnergyRaw = payload.slice(62, 70);
   let previousMonthEnergyRawReversed = previousMonthEnergyRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  let previousMonthEnergyRawDecimal = parseInt(previousMonthEnergyRawReversed, 16);
+  let previousMonthEnergyRawDecimal = hexToSignedInt(previousMonthEnergyRawReversed);
   let previousMonthEnergyTransformed = scalePreviousMonthEnergy(previousMonthEnergyPrefix, previousMonthEnergyRawDecimal);
   
   result.previous_month_energy_mwh = previousMonthEnergyTransformed;
@@ -877,7 +903,7 @@ function parsePlausibilityCheckMessage(payload) {
 
   energyValueRaw = payload.slice(6, 14);
   energyValueRawReversed = energyValueRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  energyValueRawDecimal = parseInt(energyValueRawReversed, 16);
+  energyValueRawDecimal = hexToSignedInt(energyValueRawReversed);
   energyValueTransformed = scaleEnergy(energyPrefix, energyValueRawDecimal);
   
   result.energy_mwh = energyValueTransformed;
@@ -908,7 +934,7 @@ function parsePlausibilityCheckMessage(payload) {
 
   let energyInWrongMountingPositionRaw = payload.slice(46, 54);
   let energyInWrongMountingPositionReversed = energyInWrongMountingPositionRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  let energyInWrongMountingPositionDecimal = parseInt(energyInWrongMountingPositionReversed, 16);
+  let energyInWrongMountingPositionDecimal = hexToSignedInt(energyInWrongMountingPositionReversed);
   let energyInWrongMountingPositionTransformed = scaleEnergyInWrongMountingPosition(energyInWrongMountingPositionPrefix, energyInWrongMountingPositionDecimal);
   
   result.energy_wrong_mounting_position_mwh = energyInWrongMountingPositionTransformed;
@@ -921,7 +947,7 @@ function parsePlausibilityCheckMessage(payload) {
 
   let missingTimeRaw = payload.slice(58, 66);
   let missingTimeRawReversed = missingTimeRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  let missingTimeRawDecimal = parseInt(missingTimeRawReversed, 16);
+  let missingTimeRawDecimal = hexToSignedInt(missingTimeRawReversed);
 
   switch (missingTimePrefix) {
     case '3420':
@@ -944,7 +970,7 @@ function parsePlausibilityCheckMessage(payload) {
 
   let max_fwTempRaw = payload.slice(70, 74);
   let max_fwTempRawReversed = max_fwTempRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  let max_fwTempRawDecimal = parseInt(max_fwTempRawReversed, 16);
+  let max_fwTempRawDecimal = hexToSignedInt(max_fwTempRawReversed);
   let max_fwTempTransformed = scaleMaxFwTemp(max_fwTempPrefix, max_fwTempRawDecimal);
   
   result.max_fw_temp_c = max_fwTempTransformed;
@@ -955,7 +981,7 @@ function parsePlausibilityCheckMessage(payload) {
 
   let max_rtTempRaw = payload.slice(78, 82);
   let max_rtTempRawReversed = max_rtTempRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  let max_rtTempRawDecimal = parseInt(max_rtTempRawReversed, 16);
+  let max_rtTempRawDecimal = hexToSignedInt(max_rtTempRawReversed);
   let max_rtTempTransformed = scaleMaxRtTemp(max_rtTempPrefix, max_rtTempRawDecimal);
   
   result.max_rt_temp_c = max_rtTempTransformed;
@@ -981,7 +1007,7 @@ function parseMonitoringMessage(payload) {
 
   energyValueRaw = payload.slice(6, 14);
   energyValueRawReversed = energyValueRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  energyValueRawDecimal = parseInt(energyValueRawReversed, 16);
+  energyValueRawDecimal = hexToSignedInt(energyValueRawReversed);
   energyValueTransformed = scaleEnergy(energyPrefix, energyValueRawDecimal);
   
   result.energy_mwh = energyValueTransformed;
@@ -998,7 +1024,7 @@ function parseMonitoringMessage(payload) {
 
   volumeValueRaw = payload.slice(18, 26);
   volumeValueReversed = volumeValueRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  volumeValueDecimal = parseInt(volumeValueReversed, 16);
+  volumeValueDecimal = hexToSignedInt(volumeValueReversed);
   
 
   volumeValueTransformed = scaleVolume(volumePrefix, volumeValueDecimal);
@@ -1016,7 +1042,7 @@ function parseMonitoringMessage(payload) {
 
   powerValueRaw = payload.slice(30, 34);
   powerValueRawReversed = powerValueRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  powerValueRawDecimal = parseInt(powerValueRawReversed, 16);
+  powerValueRawDecimal = hexToSignedInt(powerValueRawReversed);
   powerValueTransformed = scalePower(powerPrefix, powerValueRawDecimal);
   
   result.power_kw = powerValueTransformed;
@@ -1032,7 +1058,7 @@ function parseMonitoringMessage(payload) {
 
   flowValueRaw = payload.slice(38, 42);
   flowValueRawReversed = flowValueRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  flowValueRawDecimal = parseInt(flowValueRawReversed, 16);
+  flowValueRawDecimal = hexToSignedInt(flowValueRawReversed);
   flowValueTransformed = scaleFlow(flowPrefix, flowValueRawDecimal)
   
   result.flow_m3h = flowValueTransformed;
@@ -1049,7 +1075,7 @@ function parseMonitoringMessage(payload) {
 
   fw_tempRaw = payload.slice(46, 50);
   fw_tempRawReversed = fw_tempRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  fw_tempRawDecimal = parseInt(fw_tempRawReversed, 16);
+  fw_tempRawDecimal = hexToSignedInt(fw_tempRawReversed);
   fw_tempTransformed = scaleFwTemp(fw_tempPrefix, fw_tempRawDecimal);
   
   result.fw_temp_c = fw_tempTransformed;
@@ -1066,7 +1092,7 @@ function parseMonitoringMessage(payload) {
 
   rt_tempRaw = payload.slice(54, 58);
   rt_tempRawReversed = rt_tempRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-  rt_tempRawDecimal = parseInt(rt_tempRawReversed, 16);
+  rt_tempRawDecimal = hexToSignedInt(rt_tempRawReversed);
   rt_tempTransformed = scaleRtTemp(rt_tempPrefix, rt_tempRawDecimal);
   
   result.rt_temp_c = rt_tempTransformed;
@@ -1098,7 +1124,7 @@ function parseMonitoringMessage(payload) {
     const energyMountedWrongPrefix = payload.slice(84, 92);
     let energyMountedWrongRaw = payload.slice(92, 100);
     let energyMountedWrongReverse = energyMountedWrongRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-    let energyMountedWrongDecimal = parseInt(energyMountedWrongReverse, 16);
+    let energyMountedWrongDecimal = hexToSignedInt(energyMountedWrongReverse);
     let energyMountedWrongTransformed = scaleEnergyInWrongMountingPosition(energyMountedWrongPrefix, energyMountedWrongDecimal);
     
     result.energy_mounted_wrong_mwh = energyMountedWrongTransformed;
@@ -1108,7 +1134,7 @@ function parseMonitoringMessage(payload) {
     
     let energyMountedWrongRaw = payload.slice(94,102);
     let energyMountedWrongReverse = energyMountedWrongRaw.match(/[a-fA-F0-9]{2}/g).reverse().join('');
-    let energyMountedWrongDecimal = parseInt(energyMountedWrongReverse,16);
+    let energyMountedWrongDecimal = hexToSignedInt(energyMountedWrongReverse);
     let energyMountedWrongTransformed = scaleEnergyInWrongMountingPosition(energyMountedWrongPrefix, energyMountedWrongDecimal);
     
     result.energy_mounted_wrong_mwh = energyMountedWrongTransformed;
@@ -1159,40 +1185,20 @@ function parserForUH30(payload) {
 
 const real_payload_1 = "050406F82F00000414CD650000022D0900023B1000025A3303025E6C010C781716327104FD1700000000";
 const demoPayload = "050406FFFFFFFF0414FFFFFFFF022DFFFF023B0080025AFFFF025EFFFF0C785716327104FD1700000000";
-const demoPayload2 = "050406F82F00000414CD650000022D0900023B1000025A3303025E6C010C781716327104FD1700000000";
+const demoPayload2 = "050406F82F00000414CD650000022D0900023B1000025A3303025E6C010C781716327104FD17FFFFFFFF";
 const demo_all_min_values = "05040600000000041400000000022D0000023B0080025A0000025E00000C785716327104FD1700000000";
 const demo_all_max_values = "050406FFFFFF7F0414FFFFFF7F022DFF7F023BFF7F025AFF7F025EFF7F0C785716327104FD1700000000";
 const payload_negative_values = "050406FFFFFFFF0414FFFFFFFF022DFFFF023B0080025AFFFF025EFFFF0C785716327104FD1700000000";
 const meter_communication_error_payload = "053406FFFFFFFF3414FFFFFFFF322DFFFF323B0080325AFFFF325EFFFF3C785716327104FD1700000000";
+const negative_flow = "0504066D1700000414BB2E0000022D0000023BFFFF025A6902025E3C010C785716327104FD1700000000"
 
 //let test = parserForUH30(demoPayload2);
 //console.log(test);
 
-//let test2 = parserForUH30(demo_all_max_values);
-//console.log(test2);
 
-//const demoPayload3 = "05040600000000041400000000022D0000023B0000025A8400025E85000C782316327104FD1701000000";
-//console.log(parserForUH30(demoPayload3));
 
-//meter_comm_error_test = parserForUH30(meter_communication_error_payload)
-//console.log(meter_comm_error_test)
 
-/* module.exports = {
-  parserForUH30,
-  scaleEnergy,
-  scaleFlow,
-  scaleFwTemp,
-  scaleRtTemp,
-  scaleCoolingEnergy,
-  scaleEnergyInWrongMountingPosition,
-  scaleMaxFwTemp,
-  scaleMaxRtTemp,
-  scalePower,
-  scaleVolume,
-  scalePreviousMonthEnergy,
-  analyseError,
-  checkMeterCommunicationError
-}; */
+
 
 if (typeof module !== "undefined" && typeof module.exports !== "undefined") {
   module.exports = {
@@ -1214,4 +1220,3 @@ if (typeof module !== "undefined" && typeof module.exports !== "undefined") {
 }
 
 export {parserForUH30};
-

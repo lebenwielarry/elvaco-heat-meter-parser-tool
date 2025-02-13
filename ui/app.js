@@ -85,28 +85,38 @@ const errorTables = {
     ],
     // Andere Parser Errortabellen können hier hinzugefügt werden
     UH_30: [
-        { bitNo: 31, decimalValue: 0, identifier: 'F.0', explanation: 'No flow can be measured (F0)' },
-        { bitNo: 30, decimalValue: 0, identifier: 'F.1', explanation: 'Interruption in the hot side temperature sensor (F1)' },
-        { bitNo: 29, decimalValue: 0, identifier: 'F.2', explanation: 'Interruption in the cold side temperature sensor (F2)' },
-        { bitNo: 28, decimalValue: 0, identifier: 'F.3', explanation: 'Electronics for temperature evaluation defective (F3)' },
-        { bitNo: 27, decimalValue: 0, identifier: 'E.0', explanation: 'Problem with the power supply; Battery empty (F4)' },
-        { bitNo: 26, decimalValue: 0, identifier: 'E.1', explanation: 'Short-circuit forward flow temperature sensor (F5)' },
-        { bitNo: 25, decimalValue: 0, identifier: 'E.2', explanation: 'Short-circuit return flow temperature sensor (F6)' },
-        { bitNo: 24, decimalValue: 0, identifier: 'E.3', explanation: 'Fault in internal memory holding (EEPROM) (F7)' },
-        { bitNo: 23, decimalValue: 0, identifier: 'D.0', explanation: 'Errors F1, F2, F3, F5 or F6 for longer than 8 hours, recognition of attempts to manipulate. No further measurements are carried out. (F8)' },
-        { bitNo: 22, decimalValue: 0, identifier: 'D.1', explanation: 'Fault in the electronics (F9)' },
-        { bitNo: 21, decimalValue: 0, identifier: 'D.2', explanation: 'Reserved' },
-        { bitNo: 20, decimalValue: 0, identifier: 'D.3', explanation: '0 = Amount of energy in case of incorrect installation, 1 = Amount of cooling energy' },
-        { bitNo: 19, decimalValue: 0, identifier: 'C.0', explanation: '0 = Installation location cannot be changed when calibration seal is set, 1 = Installation location can be changed when calibration seal is set' },
-        { bitNo: 15, decimalValue: 0, identifier: 'B.0', explanation: 'F0 pre-warning' },
-        { bitNo: 14, decimalValue: 0, identifier: 'B.1', explanation: 'F4 pre-warning' },
-        { bitNo: 13, decimalValue: 0, identifier: 'B.2', explanation: 'Installation error sensor' },
-        { bitNo: 12, decimalValue: 0, identifier: 'B.3', explanation: 'Installation error volume measurement part' },
-        { bitNo: 11, decimalValue: 0, identifier: 'A.0', explanation: 'Negative temperature difference (Difference-Negative)' },
-        { bitNo: 10, decimalValue: 0, identifier: 'A.1', explanation: 'Incorrect flow direction (Flow-Negative)' },
-        { bitNo: 8, decimalValue: 0, identifier: 'A.3', explanation: '0 = Installation in return flow position, 1 = Installation in forward flow position' },
-        { bitNo: 1, decimalValue: 0, identifier: 'ZZ.6', explanation: 'Leakage warning (water meters)' },
-        { bitNo: 0, decimalValue: 0, identifier: 'ZZ.7', explanation: 'Time error DSMR' },
+        { bitNo: 0, decimalValue: "", identifier: 'ZZ.7', explanation: 'Time error DSMR' },
+        { bitNo: 1, decimalValue: "", identifier: 'ZZ.6', explanation: 'Leakage warning (water meters)' },
+        { bitNo: 2, decimalValue: "", identifier: 'ZZ.5', explanation: '-' },
+        { bitNo: 3, decimalValue: "", identifier: 'ZZ.4', explanation: '-' },
+        { bitNo: 4, decimalValue: "", identifier: 'ZZ.3', explanation: '-' },
+        { bitNo: 5, decimalValue: "", identifier: 'ZZ.2', explanation: '-' },
+        { bitNo: 6, decimalValue: "", identifier: 'ZZ.1', explanation: '-' },
+        { bitNo: 7, decimalValue: "", identifier: 'ZZ.0', explanation: '-' },
+        { bitNo: 8, decimalValue: "", identifier: 'A.3', explanation: '0 = Installation in return flow position, 1 = Installation in forward flow position' },
+        { bitNo: 9, decimalValue: "", identifier: 'A.2', explanation: '-' },
+        { bitNo: 10, decimalValue: "", identifier: 'A.1', explanation: 'Incorrect flow direction (Flow-Negative)' },
+        { bitNo: 11, decimalValue: "", identifier: 'A.0', explanation: 'Negative temperature difference (Difference-Negative)' },
+        { bitNo: 12, decimalValue: "", identifier: 'B.3', explanation: 'Installation error volume measurement part' },
+        { bitNo: 13, decimalValue: "", identifier: 'B.2', explanation: 'Installation error sensor' },
+        { bitNo: 14, decimalValue: "", identifier: 'B.1', explanation: 'F4 pre-warning' },
+        { bitNo: 15, decimalValue: "", identifier: 'B.0', explanation: 'F0 pre-warning' },
+        { bitNo: 16, decimalValue: "", identifier: 'C.3', explanation: '-' },
+        { bitNo: 17, decimalValue: "", identifier: 'C.2', explanation: '-' },
+        { bitNo: 18, decimalValue: "", identifier: 'C.1', explanation: '-' },
+        { bitNo: 19, decimalValue: "", identifier: 'C.0', explanation: '0 = Installation location cannot be changed when calibration seal is set, 1 = Installation location can be changed when calibration seal is set' },
+        { bitNo: 20, decimalValue: "", identifier: 'D.3', explanation: '0 = Amount of energy in case of incorrect installation, 1 = Amount of cooling energy' },
+        { bitNo: 21, decimalValue: "", identifier: 'D.2', explanation: 'Reserved' },
+        { bitNo: 22, decimalValue: "", identifier: 'D.1', explanation: 'Fault in the electronics (F9)' },
+        { bitNo: 23, decimalValue: "", identifier: 'D.0', explanation: 'Errors F1, F2, F3, F5 or F6 for longer than 8 hours, recognition of attempts to manipulate. No further measurements are carried out. (F8)' },
+        { bitNo: 24, decimalValue: "", identifier: 'E.3', explanation: 'Fault in internal memory holding (EEPROM) (F7)' },
+        { bitNo: 25, decimalValue: "", identifier: 'E.2', explanation: 'Short-circuit return flow temperature sensor (F6)' },
+        { bitNo: 26, decimalValue: "", identifier: 'E.1', explanation: 'Short-circuit forward flow temperature sensor (F5)' },
+        { bitNo: 27, decimalValue: "", identifier: 'E.0', explanation: 'Problem with the power supply; Battery empty (F4)' },
+        { bitNo: 28, decimalValue: "", identifier: 'F.3', explanation: 'Electronics for temperature evaluation defective (F3)' },
+        { bitNo: 29, decimalValue: "", identifier: 'F.2', explanation: 'Interruption in the cold side temperature sensor (F2)' },
+        { bitNo: 30, decimalValue: "", identifier: 'F.1', explanation: 'Interruption in the hot side temperature sensor (F1)' },
+        { bitNo: 31, decimalValue: "", identifier: 'F.0', explanation: 'No flow can be measured (F0)' },
     ],
     
     Sharky: [],
@@ -201,7 +211,6 @@ function processPayload(payload, parserType) {
         
         if (parserType == 'UH_50'){
             result = parseUH50(payload);
-            console.log("Result UH50 " + result);
         }
         else if (parserType == 'UH_30'){
             let data = parserForUH30(payload);
@@ -210,7 +219,6 @@ function processPayload(payload, parserType) {
                 acc[newKey] = data[key];
                 return acc;
               }, {});
-            console.log("Result UH30" + result);
         }else {
             throw new Error('Ungültiger Parser Typ');
         }
@@ -221,7 +229,12 @@ function processPayload(payload, parserType) {
         updateRadarChart(result);
 
         // Extract the errors array
-        const activeErrors = result.errors && result.errors !== 0 ? result.errors : []; // Handle 0 as no errors
+        let activeErrors;
+        if(parserType == 'UH_50'){
+            activeErrors = result.errors && result.errors !== 0 ? result.errors : []; // Handle 0 as no errors
+        }else if (parserType == 'UH_30'){
+            activeErrors = result.analyzedError;
+        }
 
         // Update the error table with the active errors
         const selectedParser = document.getElementById('parser-select').value;
