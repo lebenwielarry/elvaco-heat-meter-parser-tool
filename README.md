@@ -78,8 +78,3 @@ If you want to integrate your own parser into this application for testing and v
 - Enter a payload and click on the 'Verarbeiten' button.
 - Verify that your data is parsed, displayed in the table, visualized in charts, and error codes (if any) are shown.
 
-### Notes:
-- Ensure your parser output object uses the same key names as other parsers (e.g., `MYM_energy`, `MYM_volume`, `MYM_power`, `MYM_flow`, `MYM_forwardTemperature`, `MYM_returnTemperature`) to ensure proper visualization.
-- Additionally, each parsed field should include a corresponding prefix value (e.g., `energyPrefix`, `volumePrefix`) for consistency.
-- If your parser outputs different key names, you may need to adapt the `keyMap` object in `app.js` to map your keys to the expected ones.
-
