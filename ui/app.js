@@ -1,4 +1,6 @@
-import { parseUH50 } from './parser/parser.js';
+import { parseUH50 } from './parser/uh50_burak/parser.js';
+import { parserForUH30 } from "./parser/uh30_annalena/uh30.js";
+
 
 Chart.register({
     id: 'backgroundColorPlugin',
@@ -18,15 +20,42 @@ Chart.register({
     }
 });
 const charts = {}; // Speicher für alle Diagramme
+
+let radarChart;
+
 const chartKeys = ['energy', 'volume', 'power', 'flow', 'forwardTemperature', 'returnTemperature'];
+
+const radarChartKeys = ['power', 'flow', 'forwardTemperature', 'returnTemperature'];
+
+// Map to replace the keys of UH30 to match those of UH50
+const keyMap = {
+    payload_style: 'messageType',
+    energy_mwh: 'energy',
+    volume_m3: 'volume',
+    power_kw: 'power',
+    flow_m3h: 'flow',
+    fw_temp_c: 'forwardTemperature',
+    rt_temp_c: 'returnTemperature'
+};
+
 const fixedAxisRanges = {
-    energy: { min: 0, max: 550 }, 
-    volume: { min: 0, max: 5000 },
-    power: { min: 0, max: 110 },
+    energy: { min: 0, max: 500 }, 
+    volume: { min: 0, max: 500 },
+    power: { min: 0, max: 100 },
     flow: { min: 0, max: 6 },
     forwardTemperature: { min: 0, max: 120 },
     returnTemperature: { min: 0, max: 120 },
 };
+
+const plausibleRanges = {
+    energy: [50, 250], // Beispielbereich für Energie
+    volume: [100, 250],
+    power: [10, 80],
+    flow: [0.1, 5],
+    forwardTemperature: [50, 100],
+    returnTemperature: [0, 70],
+};
+
 const units = {
     energy: 'MWh',
     volume: 'm³',
@@ -54,49 +83,54 @@ const errorTables = {
         { bitNo: 14, decimalValue: '-', identifier: '-', explanation: 'Always 0' },
         { bitNo: 15, decimalValue: '-', identifier: '-', explanation: 'Always 0' },
     ],
-    // Andere Maschinen können hier hinzugefügt werden
+    // Andere Parser Errortabellen können hier hinzugefügt werden
     UH_30: [
-        { bitNo: 0, decimalValue: 1, identifier: 'F.0', explanation: 'No flow can be measured (F0)' },
-        { bitNo: 1, decimalValue: 2, identifier: 'F.1', explanation: 'Interruption in the hot side temperature sensor (F1)' },
-        { bitNo: 2, decimalValue: 4, identifier: 'F.2', explanation: 'Interruption in the cold side temperature sensor (F2)' },
-        { bitNo: 3, decimalValue: 8, identifier: 'F.3', explanation: 'Electronics for temperature evaluation defective (F3)' },
-        { bitNo: 4, decimalValue: 16, identifier: 'E.0', explanation: 'Problem with the power supply; Battery empty (F4)' },
-        { bitNo: 5, decimalValue: 32, identifier: 'E.1', explanation: 'Short-circuit forward flow temperature sensor (F5)' },
-        { bitNo: 6, decimalValue: 64, identifier: 'E.2', explanation: 'Short-circuit return flow temperature sensor (F6)' },
-        { bitNo: 7, decimalValue: 128, identifier: 'E.3', explanation: 'Fault in internal memory holding (EEPROM) (F7)' },
-        { bitNo: 8, decimalValue: 256, identifier: 'D.0', explanation: 'Errors F1, F2, F3, F5 or F6 for longer than 8 hours, recognition of attempts to manipulate. No further measurements are carried out. (F8)' },
-        { bitNo: 9, decimalValue: 512, identifier: 'D.1', explanation: 'Fault in the electronics (F9)' },
-        { bitNo: 10, decimalValue: 1024, identifier: 'D.2', explanation: 'Reserved' },
-        { bitNo: 11, decimalValue: 2048, identifier: 'D.3', explanation: '0 = Amount of energy in case of incorrect installation, 1 = Amount of cooling energy' },
-        { bitNo: 12, decimalValue: 4096, identifier: 'C.0', explanation: '0 = Installation location cannot be changed when calibration seal is set, 1 = Installation location can be changed when calibration seal is set' },
-        { bitNo: 13, decimalValue: 8192, identifier: 'B.0', explanation: 'F0 pre-warning' },
-        { bitNo: 14, decimalValue: 16384, identifier: 'B.1', explanation: 'F4 pre-warning' },
-        { bitNo: 15, decimalValue: 32768, identifier: 'B.2', explanation: 'Installation error sensor' },
-        { bitNo: 16, decimalValue: 65536, identifier: 'B.3', explanation: 'Installation error volume measurement part' },
-        { bitNo: 17, decimalValue: 131072, identifier: 'A.0', explanation: 'Negative temperature difference (Difference-Negative)' },
-        { bitNo: 18, decimalValue: 262144, identifier: 'A.1', explanation: 'Incorrect flow direction (Flow-Negative)' },
-        { bitNo: 19, decimalValue: 524288, identifier: 'A.3', explanation: '0 = Installation in return flow position, 1 = Installation in forward flow position' },
-        { bitNo: 20, decimalValue: 1048576, identifier: 'ZZ.6', explanation: 'Leakage warning (water meters)' },
-        { bitNo: 21, decimalValue: 2097152, identifier: 'ZZ.7', explanation: 'Time error DSMR' },
+        { bitNo: 0, decimalValue: "", identifier: 'ZZ.7', explanation: 'Time error DSMR' },
+        { bitNo: 1, decimalValue: "", identifier: 'ZZ.6', explanation: 'Leakage warning (water meters)' },
+        { bitNo: 2, decimalValue: "", identifier: 'ZZ.5', explanation: '-' },
+        { bitNo: 3, decimalValue: "", identifier: 'ZZ.4', explanation: '-' },
+        { bitNo: 4, decimalValue: "", identifier: 'ZZ.3', explanation: '-' },
+        { bitNo: 5, decimalValue: "", identifier: 'ZZ.2', explanation: '-' },
+        { bitNo: 6, decimalValue: "", identifier: 'ZZ.1', explanation: '-' },
+        { bitNo: 7, decimalValue: "", identifier: 'ZZ.0', explanation: '-' },
+        { bitNo: 8, decimalValue: "", identifier: 'A.3', explanation: '0 = Installation in return flow position, 1 = Installation in forward flow position' },
+        { bitNo: 9, decimalValue: "", identifier: 'A.2', explanation: '-' },
+        { bitNo: 10, decimalValue: "", identifier: 'A.1', explanation: 'Incorrect flow direction (Flow-Negative)' },
+        { bitNo: 11, decimalValue: "", identifier: 'A.0', explanation: 'Negative temperature difference (Difference-Negative)' },
+        { bitNo: 12, decimalValue: "", identifier: 'B.3', explanation: 'Installation error volume measurement part' },
+        { bitNo: 13, decimalValue: "", identifier: 'B.2', explanation: 'Installation error sensor' },
+        { bitNo: 14, decimalValue: "", identifier: 'B.1', explanation: 'F4 pre-warning' },
+        { bitNo: 15, decimalValue: "", identifier: 'B.0', explanation: 'F0 pre-warning' },
+        { bitNo: 16, decimalValue: "", identifier: 'C.3', explanation: '-' },
+        { bitNo: 17, decimalValue: "", identifier: 'C.2', explanation: '-' },
+        { bitNo: 18, decimalValue: "", identifier: 'C.1', explanation: '-' },
+        { bitNo: 19, decimalValue: "", identifier: 'C.0', explanation: '0 = Installation location cannot be changed when calibration seal is set, 1 = Installation location can be changed when calibration seal is set' },
+        { bitNo: 20, decimalValue: "", identifier: 'D.3', explanation: '0 = Amount of energy in case of incorrect installation, 1 = Amount of cooling energy' },
+        { bitNo: 21, decimalValue: "", identifier: 'D.2', explanation: 'Reserved' },
+        { bitNo: 22, decimalValue: "", identifier: 'D.1', explanation: 'Fault in the electronics (F9)' },
+        { bitNo: 23, decimalValue: "", identifier: 'D.0', explanation: 'Errors F1, F2, F3, F5 or F6 for longer than 8 hours, recognition of attempts to manipulate. No further measurements are carried out. (F8)' },
+        { bitNo: 24, decimalValue: "", identifier: 'E.3', explanation: 'Fault in internal memory holding (EEPROM) (F7)' },
+        { bitNo: 25, decimalValue: "", identifier: 'E.2', explanation: 'Short-circuit return flow temperature sensor (F6)' },
+        { bitNo: 26, decimalValue: "", identifier: 'E.1', explanation: 'Short-circuit forward flow temperature sensor (F5)' },
+        { bitNo: 27, decimalValue: "", identifier: 'E.0', explanation: 'Problem with the power supply; Battery empty (F4)' },
+        { bitNo: 28, decimalValue: "", identifier: 'F.3', explanation: 'Electronics for temperature evaluation defective (F3)' },
+        { bitNo: 29, decimalValue: "", identifier: 'F.2', explanation: 'Interruption in the cold side temperature sensor (F2)' },
+        { bitNo: 30, decimalValue: "", identifier: 'F.1', explanation: 'Interruption in the hot side temperature sensor (F1)' },
+        { bitNo: 31, decimalValue: "", identifier: 'F.0', explanation: 'No flow can be measured (F0)' },
     ],
     
     Sharky: [],
     Itron: [],
 };
-const plausibleRanges = {
-    energy: [50, 500], // Beispielbereich für Energie
-    volume: [100, 1000],
-    power: [10, 100],
-    flow: [0.1, 5],
-    forwardTemperature: [0, 100],
-    returnTemperature: [0, 100],
-};
+
 
 // Globale Variable, um zu verfolgen, ob der Verarbeiten-Button gedrückt wurde
 let isProcessed = false;
 
 initializeEmptyTable();
 initializeEmptyCharts();
+initializeRadarChart();
+
 
 // Funktion, um die Seite zurückzusetzen
 function resetPage() {
@@ -114,7 +148,7 @@ function resetPage() {
     const selectedParser = document.getElementById('parser-select').value;
 
     // "Verarbeiten"-Button aktivieren oder deaktivieren
-    document.getElementById('process-uh50').disabled = !selectedParser;
+    document.getElementById('process-parser').disabled = !selectedParser;
 
     // "Plausibility Check"-Button immer deaktivieren (bis Verarbeitung erfolgt)
     document.getElementById('plausibility-check-btn').disabled = true;
@@ -129,7 +163,7 @@ document.getElementById('parser-select').addEventListener('change', (event) => {
 
     // Reset the page to clear previous data
     resetPage();
-    document.getElementById('uh50-input').disabled = false;
+    document.getElementById('parser-input').disabled = false;
 
     // Update the error table with no active errors
     if (selectedParser) {
@@ -138,13 +172,14 @@ document.getElementById('parser-select').addEventListener('change', (event) => {
 });
 
 // Event Listener für "Verarbeiten"-Button
-document.getElementById('process-uh50').addEventListener('click', () => {
-    const hexInput = document.getElementById('uh50-input').value.trim();
+document.getElementById('process-parser').addEventListener('click', () => {
+    const hexInput = document.getElementById('parser-input').value.trim();
     const selectedParser = document.getElementById('parser-select').value;
+    console.log("Selected Parser:" + selectedParser);
 
     // Check if a machine is selected
     if (!selectedParser) {
-        alert('Bitte eine Maschine auswählen, bevor der Payload verarbeitet wird!');
+        alert('Bitte einen Parser auswählen, bevor der Payload verarbeitet wird!');
         return;
     }
 
@@ -155,7 +190,7 @@ document.getElementById('process-uh50').addEventListener('click', () => {
     }
 
     // Call processPayload to handle parsing and table/chart updates
-    processPayload(hexInput);
+    processPayload(hexInput, selectedParser);
 });
 
 // Event Listener für "Plausibility Check"-Button
@@ -170,17 +205,36 @@ document.getElementById('plausibility-check-btn').addEventListener('click', () =
 });
 
 // Funktion zur Verarbeitung des Payloads
-function processPayload(payload) {
+function processPayload(payload, parserType) {
     try {
-        // Parse the payload using the selected parser
-        const result = parseUH50(payload); // Replace with the appropriate parser for the selected machine
+        let result; 
+        
+        if (parserType == 'UH_50'){
+            result = parseUH50(payload);
+        }
+        else if (parserType == 'UH_30'){
+            let data = parserForUH30(payload);
+            result = Object.keys(data).reduce((acc, key) => {
+                const newKey = keyMap[key] || key;
+                acc[newKey] = data[key];
+                return acc;
+              }, {});
+        }else {
+            throw new Error('Ungültiger Parser Typ');
+        }
 
         // Update the details table and charts
         displayPayloadDetails(result);
         updateCharts(result);
+        updateRadarChart(result);
 
         // Extract the errors array
-        const activeErrors = result.errors && result.errors !== 0 ? result.errors : []; // Handle 0 as no errors
+        let activeErrors;
+        if(parserType == 'UH_50'){
+            activeErrors = result.errors && result.errors !== 0 ? result.errors : []; // Handle 0 as no errors
+        }else if (parserType == 'UH_30'){
+            activeErrors = result.analyzedError;
+        }
 
         // Update the error table with the active errors
         const selectedParser = document.getElementById('parser-select').value;
@@ -374,6 +428,7 @@ function initializeEmptyCharts() {
     });
 }
 
+
 function updateCharts(payload) {
     Object.entries(payload).forEach(([key, value]) => {
         if (!chartKeys.includes(key)) return; // Überspringe Keys, die nicht in chartKeys enthalten sind
@@ -436,7 +491,7 @@ function updateCharts(payload) {
                 },
             },
         });
-    });
+    });     
 }
 
 function displayErrorTable(machine, errorsArray = []) {
@@ -496,4 +551,54 @@ function displayErrorTable(machine, errorsArray = []) {
 
     table.appendChild(tbody);
     tableContainer.appendChild(table);
+}
+
+// Function to initialize the radar chart
+function initializeRadarChart() {
+    const radarCanvas = document.getElementById("radar-chart");
+    if (!radarCanvas) {
+        console.error("Radar chart canvas not found.");
+        return;
+    }
+
+    const radarCtx = radarCanvas.getContext("2d");
+
+    const radarData = {
+        labels: ["Power", "Flow", "forwardTemperature", "returnTemperature"],
+        datasets: [{
+            label: "Payload",
+            data: [0, 0, 0, 0],
+            fill: true,
+            backgroundColor: "rgba(75, 192, 192, 0.5)",
+            borderColor: "rgb(75, 192, 192)",
+            pointBackgroundColor: "rgba(75, 192, 192, 1)",
+        }]
+    };
+
+    radarChart = new Chart(radarCtx, {
+        type: "radar",
+        data: radarData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    suggestedMin: 0,
+                    suggestedMax: 100
+                }
+            }
+        }
+    });
+}
+
+function updateRadarChart(payloadData){
+    let radarData = [];
+
+    Object.entries(payloadData).forEach(([key, value])=>{
+        if(radarChartKeys.includes(key)){
+            radarData.push(value);
+        }
+    });
+    radarChart.data.datasets[0].data = radarData;
+    radarChart.update();
 }

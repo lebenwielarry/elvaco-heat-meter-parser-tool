@@ -69,6 +69,9 @@ th {
     background-color: #f0f0f0;
 }
 
+
+
+
 /* Hauptcontainer für Diagramme und Tabelle */
 #charts-container {
     display: flex; /* Flexbox für nebeneinander Anordnung */
@@ -118,5 +121,15 @@ th {
 
 .error-table tbody tr:nth-child(even) {
     background-color: #f9f9f9;
+}
+
+#radar-chart {
+    flex: 1;
+    display: flex;
+    /*margin: 20px auto; /* Centers the radar chart */
+    max-width: 500px; /* Adjust width for radar chart */
+    max-height: 400px; /* Adjust height */
+    /*border: 2px solid #f679797c; */
+    /*background-color: rgba(89, 100, 104, 0.334);*/
 }
 
