@@ -9,33 +9,33 @@
 </head>
 
 <body>
-    <header>
-        <h1>Fernwärme Payload Tool</h1>
-    </header>
     <main>
-        <section id="parser-selection">
-            <label for="parser-select">Wähle einen Parser:</label>
-            <select id="parser-select">
-                <option value="">-- Wähle einen Parser --</option>
-                <option value="UH_50">UH_50</option>
-                <option value="UH_30">UH_30</option>
-            </select>
-        </section>
-
-        <section id="payload-processing">
-            <h2>Payload Verarbeiten</h2>
-            <textarea id="parser-input" placeholder="Gib einen Payload ein..." disabled>000C06159518000C14005136000B2D7501000B3B4703000A5A02090A5E64040C787077907002FD170630</textarea>
-        <section></section>
-            <button id="plausibility-check-btn" disabled>Plausibility Check durchführen</button>
-            <button id="process-parser" >Verarbeiten</button>
-        </section>
-    <section>
-    </section>
-
-    <section id="radar-chart-section">
-        <h4>Radar Chart</h4>
-        <canvas id="radar-chart"></canvas>
-    </section>
+        <header>
+            <h1>Fernwärme Payload Tool</h1>
+        </header>
+        <div class="flex-container">  <!-- Add this wrapper with a class to use in CSS -->
+            <section id="parser-selection">
+                <label for="parser-select">Wähle einen Parser:</label>
+                <select id="parser-select">
+                    <option value="">-- Wähle einen Parser --</option>
+                    <option value="UH_50">UH_50</option>
+                    <option value="UH_30">UH_30</option>
+                </select>
+            </section>
+    
+            <section id="payload-processing">
+                <h2>Payload Verarbeiten</h2>
+                <textarea id="parser-input" placeholder="Gib einen Payload ein..." disabled>000C06159518000C14005136000B2D7501000B3B4703000A5A02090A5E64040C787077907002FD170630</textarea>
+                <button id="plausibility-check-btn" disabled>Plausibility Check durchführen</button>
+                <button id="process-parser">Verarbeiten</button>
+            </section>
+    
+            <section id="radar-chart-section">
+                <h4>Radar Chart</h4>
+                <canvas id="radar-chart"></canvas>
+            </section>
+        </div>
+        <!-- Rest of your content -->
         <section id="charts-container">
             <section id="charts">
                 <!-- Diagramme werden dynamisch hinzugefügt -->
@@ -65,14 +65,11 @@
                 <p>Wähle zuerst einen Parser aus.</p>
             </div>
         </section>
-        
-
-        
     </main>
     <footer>
         <p>Hinweis: Diese Webseite wurde zu Übungszwecken erstellt und dient nur Demonstrationszwecken.</p>
         <p>Erstellt im Rahmen des Fortgeschrittenenpraktikums - Wintersemester 2024</p>
-        <p>&copy; 2024, Burak Ertan</p>
+        <p>&copy; 2024, Annalena Frey, Burak Ertan</p>
     </footer>
     
     <script type="module" src="app.js"></script>

@@ -132,4 +132,15 @@ th {
     /*border: 2px solid #f679797c; */
     /*background-color: rgba(89, 100, 104, 0.334);*/
 }
+.flex-container {
+    display: flex;
+    justify-content: space-around; /* Adjusts the spacing between the children */
+    align-items: start; /* Aligns items to the start of the flex container */
+}
+
+#parser-selection, #payload-processing, #radar-chart-section {
+    flex: 1; /* Gives each section an equal share of the space */
+    padding: 10px; /* Optional: adds some space inside each section */
+}
+
 
