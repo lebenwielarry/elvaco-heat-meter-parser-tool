@@ -135,9 +135,24 @@ th {
 /* Ensures that the flex container takes up the full width of its parent, often necessary if the parent's width isn't explicitly set */
 .flex-container {
     display: flex;
-    justify-content: space-between; /* This spaces out the child elements evenly */
-    width: 100%; /* Ensures the container takes up all available horizontal space */
+    justify-content: space-between; /* This will keep the left and right containers apart */
+    align-items: start; /* Align items at the start of the container */
+    width: 100%;
 }
+
+.left-container {
+    flex: 3; /* Allocates more space to the left container */
+    display: flex;
+    flex-direction: column; /* Stacks the sections vertically */
+}
+
+.right-container {
+    flex: 1; /* Gives less space to the radar chart */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Aligns the radar chart to the right */
+}
+
 
 #parser-selection, #payload-processing, #radar-chart-section {
     flex: 1; /* This ensures that each section takes up equal space */
