@@ -22,22 +22,22 @@ If you want to integrate your own parser into this application for testing and v
       return {
           messageType: 'Standard Message',
           energyPrefix: '0C06',
-          MYM_energy: 189.515,
+          energy: 189.515,
           volumePrefix: '0C14',
-          MYM_volume: 3651,
+          volume: 3651,
           powerPrefix: '0B2D',
-          MYM_power: 17.5,
+          power: 17.5,
           flowPrefix: '0B3B',
-          MYM_flow: 0.347,
+          flow: 0.347,
           fwTempPrefix: '0A5A',
-          MYM_forwardTemperature: 90.2,
+          forwardTemperature: 90.2,
           rtTempPrefix: '0A5E',
-          MYM_returnTemperature: 46.4,
+          returnTemperature: 46.4,
           meterIDValuePrefix: '0C78',
           meterId: '70907770',
           errorBitsValuePrefix: '02FD17',
           errorBitsValue: 12294,
-          MYM_errors: ['F1', 'F2'], // Optional: Array of error identifiers
+          errors: ['F1', 'F2'], // Optional: Array of error identifiers
       };
   }
   ```

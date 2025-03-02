@@ -108,43 +108,47 @@ export function parseStandardMessage(payload) {
        result.meterId = meterIdValue;
        currentIndex += 8; // Move past the meter ID field
    
-       // Error Flags (4 bytes)
-        const errorBitsValuePrefix = payload.slice(currentIndex, currentIndex + 6);
-        result.errorBitsValuePrefix = errorBitsValuePrefix;
-        currentIndex += 6;
+      // Error Flags (4 bytes)
+const errorBitsValuePrefix = payload.slice(currentIndex, currentIndex + 6);
+result.errorBitsValuePrefix = errorBitsValuePrefix;
+currentIndex += 6;
 
-        // Reverse the slice from currentIndex and convert to decimal
-        const errorBitsValue = parseInt(reverse(payload.slice(currentIndex, currentIndex + 4)), 16);
-        result.errorBitsValue = errorBitsValue; // Keep the original value for reference
-        currentIndex += 4; // Move past the error flags
-        console.log(errorBitsValue);
+// Reverse the slice from currentIndex and convert to decimal
+const errorBitsHex = reverse(payload.slice(currentIndex, currentIndex + 4));  // Reverse HEX
+const errorBitsValue = parseInt(errorBitsHex, 16);  // Convert to decimal
+result.errorBitsValue = errorBitsValue; // Store raw decimal value for reference
+currentIndex += 4; // Move past the error flags
+console.log("Error Bits (Decimal):", errorBitsValue);
+console.log("Error Bits (Binary):", errorBitsValue.toString(2).padStart(16, "0")); // Keep leading zeros
 
-        // Aktive Fehler analysieren
-        const parseErrorFlags = (errorBits) => {
-            const errorDescriptions = {
-                0: { identifier: "F0", message: "Error during flow metering (e.g. Air in measuring pipe)" },
-                1: { identifier: "F1", message: "Interruption of flow temperature sensor" },
-                2: { identifier: "F2", message: "Interruption of return temperature sensor" },
-                3: { identifier: "F3", message: "Electronic for temperature evaluation defective" },
-                4: { identifier: "F4", message: "Battery empty 1" },
-                5: { identifier: "F5", message: "Short-circuit flow temperature sensor" },
-                6: { identifier: "F6", message: "Short-circuit return temperature sensor" },
-                7: { identifier: "F7", message: "Fault in the internal memory (CRC)" },
-                8: { identifier: "F8", message: "Error F1, F2, F5 or F6 pending for longer than 8h." },
-                9: { identifier: "F9", message: "Error in the electronics" },
-                10: { identifier: "F0V", message: "Prewarning for soiling of the measurement tube" },
-                11: { identifier: "F7V", message: "Correctable error in the internal memory EEPROM 2" },
-            };
+// Function to parse error flags
+const parseErrorFlags = (errorBits) => {
+    const errorDescriptions = {
+        0: { identifier: "F0", message: "Error during flow metering (e.g. Air in measuring pipe)" },
+        1: { identifier: "F1", message: "Interruption of flow temperature sensor" },
+        2: { identifier: "F2", message: "Interruption of return temperature sensor" },
+        3: { identifier: "F3", message: "Electronic for temperature evaluation defective" },
+        4: { identifier: "F4", message: "Battery empty 1" },
+        5: { identifier: "F5", message: "Short-circuit flow temperature sensor" },
+        6: { identifier: "F6", message: "Short-circuit return temperature sensor" },
+        7: { identifier: "F7", message: "Fault in the internal memory (CRC)" },
+        8: { identifier: "F8", message: "Error F1, F2, F5 or F6 pending for longer than 8h." },
+        9: { identifier: "F9", message: "Error in the electronics" },
+        10: { identifier: "F0V", message: "Prewarning for soiling of the measurement tube" },
+        11: { identifier: "F7V", message: "Correctable error in the internal memory EEPROM 2" },
+    };
 
-            const errors = [];
-            Object.keys(errorDescriptions).forEach((bit) => {
-                if (errorBits & (1 << bit)) {
-                    // Nur die Identifier (z. B. F1, F2) hinzufügen
-                    errors.push(errorDescriptions[bit].identifier);
-                }
-            });
-            return errors;
-        };
+    const errors = [];
+    for (let bit = 0; bit < 16; bit++) {
+        if ((errorBits >> bit) & 1) {  // Check if the bit is set
+            if (errorDescriptions[bit]) {
+                errors.push(errorDescriptions[bit].identifier);
+            }
+        }
+    }
+
+    return errors;
+};
 
         // Fehlerbits analysieren und hinzufügen
         result.errors = parseErrorFlags(errorBitsValue);

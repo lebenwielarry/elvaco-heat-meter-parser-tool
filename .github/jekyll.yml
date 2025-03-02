@@ -3,7 +3,10 @@ name: Jekyll Build and Deploy
 on:
   push:
     branches:
-      - main  # Change to your deployment branch
+      - main  # Adjust this to your working branch
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
@@ -16,9 +19,9 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.1  # Adjust to your Jekyll version
+          ruby-version: 3.1  # Ensure Jekyll compatibility
 
-      - name: Install Jekyll and Bundler
+      - name: Install Jekyll and Dependencies
         run: |
           gem install jekyll bundler
           bundle install
