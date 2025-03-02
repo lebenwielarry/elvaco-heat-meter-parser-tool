@@ -154,7 +154,6 @@ th {
 }
 .button-container {
     display: flex;
-    justify-content: space-between; /* Adjusts spacing between buttons */
     padding-top: 10px; /* Adds space above the buttons */
 }
 
