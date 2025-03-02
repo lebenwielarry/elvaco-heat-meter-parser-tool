@@ -152,7 +152,11 @@ th {
     flex-direction: column;
     align-items: flex-end; /* Aligns the radar chart to the right */
 }
-
+.button-container {
+    display: flex;
+    justify-content: space-between; /* Adjusts spacing between buttons */
+    padding-top: 10px; /* Adds space above the buttons */
+}
 
 #parser-selection, #payload-processing, #radar-chart-section {
     flex: 1; /* This ensures that each section takes up equal space */
