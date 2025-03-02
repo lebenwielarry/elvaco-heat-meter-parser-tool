@@ -154,8 +154,14 @@ th {
 }
 .button-container {
     display: flex;
-    padding-top: 10px; /* Adds space above the buttons */
+    justify-content: flex-start; /* Positioniert die Buttons am Anfang des Containers */
+    gap: 20px; /* Fügt einen festen Abstand zwischen den Buttons hinzu */
 }
+
+#plausibility-check-btn, #process-parser {
+    margin-right: 10px; /* Fügt rechts von jedem Button einen Margin hinzu, außer dem letzten */
+}
+
 
 #parser-selection, #payload-processing, #radar-chart-section {
     flex: 1; /* This ensures that each section takes up equal space */
