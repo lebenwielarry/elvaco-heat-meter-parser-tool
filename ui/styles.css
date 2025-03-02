@@ -132,15 +132,18 @@ th {
     /*border: 2px solid #f679797c; */
     /*background-color: rgba(89, 100, 104, 0.334);*/
 }
+/* Ensures that the flex container takes up the full width of its parent, often necessary if the parent's width isn't explicitly set */
 .flex-container {
     display: flex;
-    justify-content: space-around; /* Adjusts the spacing between the children */
-    align-items: start; /* Aligns items to the start of the flex container */
+    justify-content: space-between; /* This spaces out the child elements evenly */
+    width: 100%; /* Ensures the container takes up all available horizontal space */
 }
 
 #parser-selection, #payload-processing, #radar-chart-section {
-    flex: 1; /* Gives each section an equal share of the space */
-    padding: 10px; /* Optional: adds some space inside each section */
+    flex: 1; /* This ensures that each section takes up equal space */
+    margin: 10px; /* Adds space around each section to prevent them from touching */
+    min-width: 0; /* Prevents flex items from not shrinking below their content size */
 }
+
 
 
