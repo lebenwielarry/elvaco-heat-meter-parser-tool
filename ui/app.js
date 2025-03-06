@@ -204,49 +204,56 @@ document.getElementById('plausibility-check-btn').addEventListener('click', () =
     applyPlausibilityChecks();
 });
 
-// Funktion zur Verarbeitung des Payloads
 function processPayload(payload, parserType) {
     try {
-        let result; 
-        
-        if (parserType == 'UH_50'){
+        let result;
+
+        console.log(`Selected parser: ${parserType}`);
+        console.log(`Payload received: ${payload}`);
+
+        if (parserType === 'UH_50') {
             result = parseUH50(payload);
-        }
-        else if (parserType == 'UH_30'){
-            let data = parserForUH30(payload);
+        } else if (parserType === 'UH_30') {
+            console.log("Calling parserForUH30...");
+            let data = parserForUH30(payload); // <-- Call the parser
+            
+            console.log("Raw UH30 parser output:", data);
+
+            if (!data || typeof data !== "object") {
+                throw new Error("UH30 parser returned an invalid value");
+            }
+
+            // ✅ Convert UH30 keys to UH50 format
             result = Object.keys(data).reduce((acc, key) => {
                 const newKey = keyMap[key] || key;
                 acc[newKey] = data[key];
                 return acc;
-              }, {});
-        }else {
-            throw new Error('Ungültiger Parser Typ');
+            }, {});
+
+            console.log("Mapped UH30 parser output:", result);
+        } else {
+            throw new Error('Invalid parser type');
         }
 
-        // Update the details table and charts
+        console.log("Final parsed result:", result);
+
+        // ✅ Update UI
         displayPayloadDetails(result);
         updateCharts(result);
         updateRadarChart(result);
 
-        // Extract the errors array
-        let activeErrors;
-        if(parserType == 'UH_50'){
-            activeErrors = result.errors && result.errors !== 0 ? result.errors : []; // Handle 0 as no errors
-        }else if (parserType == 'UH_30'){
-            activeErrors = result.analyzedError;
-        }
+        // ✅ Extract errors
+        let activeErrors = parserType === 'UH_50' 
+            ? (result.errors && result.errors !== 0 ? result.errors : [])
+            : result.analyzedError || [];
 
-        // Update the error table with the active errors
-        const selectedParser = document.getElementById('parser-select').value;
-        displayErrorTable(selectedParser, activeErrors);
+        displayErrorTable(parserType, activeErrors);
 
-        // Enable the plausibility check button
         document.getElementById('plausibility-check-btn').disabled = false;
-
-        // Mark processing as complete
         isProcessed = true;
     } catch (error) {
-        alert('Fehler bei der Verarbeitung des Payloads: ' + error.message);
+        console.error('Error in processing payload:', error);
+        alert('An error occurred: ' + error.message);
     }
 }
 
@@ -298,9 +305,94 @@ function displayPayloadDetails(payload) {
     });
 }
 
+
+function createPlausibilityInputs() {
+    const inputContainer = document.getElementById('charts-inputs');
+    inputContainer.innerHTML = ''; // Clear existing inputs
+
+    const rowContainer = document.createElement('div');
+    rowContainer.style.display = 'flex';
+    rowContainer.style.justifyContent = 'space-evenly';
+    rowContainer.style.width = '100%';
+
+    // Hardcoded labels for each parameter
+    const labels = {
+        energy: "Energy",
+        volume: "Volume",
+        power: "Power",
+        flow: "Flow",
+        forwardTemperature: "fwTemp",
+        returnTemperature: "rtTemp"
+    };
+
+    Object.entries(plausibleRanges).forEach(([key, range]) => {
+        const [defaultMin, defaultMax] = range;
+
+        const inputDiv = document.createElement('div');
+        inputDiv.classList.add('plausibility-input-container');
+
+        // Use hardcoded labels instead of key names
+        const labelText = labels[key] || key; // Fallback to key if no hardcoded label exists
+
+        inputDiv.innerHTML = `
+            <label>${labelText} Min:</label>
+            <input type="number" id="min-${key}" value="${defaultMin}" step="0.1" min="-100" max="10000">
+            <label>${labelText} Max:</label>
+            <input type="number" id="max-${key}" value="${defaultMax}" step="0.1" min="-100" max="10000">
+        `;
+
+        rowContainer.appendChild(inputDiv);
+    });
+
+    inputContainer.appendChild(rowContainer);
+
+    // Ensure plausibility range updates when input values change
+    document.querySelectorAll('[id^="min-"], [id^="max-"]').forEach((input) => {
+        input.addEventListener('change', updatePlausibilityRange);
+    });
+}
+
+
+function updatePlausibilityRange() {
+    Object.keys(plausibleRanges).forEach((key) => {
+        const minInput = document.getElementById(`min-${key}`);
+        const maxInput = document.getElementById(`max-${key}`);
+
+        let minValue = parseFloat(minInput.value);
+        let maxValue = parseFloat(maxInput.value);
+
+        // Validate input
+        if (isNaN(minValue) || minValue < -100 || minValue > 10000) {
+            alert(`${key} Min value must be a number between -100 and 10000`);
+            minInput.value = plausibleRanges[key][0]; // Reset to previous valid value
+            return;
+        }
+
+        if (isNaN(maxValue) || maxValue < -100 || maxValue > 10000) {
+            alert(`${key} Max value must be a number between -100 and 10000`);
+            maxInput.value = plausibleRanges[key][1]; // Reset to previous valid value
+            return;
+        }
+
+        if (minValue >= maxValue) {
+            alert(`${key} Min value must be smaller than Max value!`);
+            minInput.value = plausibleRanges[key][0]; // Reset
+            maxInput.value = plausibleRanges[key][1]; // Reset
+            return;
+        }
+
+        // ✅ Update plausibleRanges with user-defined values
+        plausibleRanges[key] = [minValue, maxValue];
+
+        // ✅ Immediately apply plausibility check after updating values
+        applyPlausibilityChecks();
+    });
+}
+
+
 function applyPlausibilityChecks() {
     console.log("applyPlausibilityChecks wird ausgeführt!"); // Debugging
-    // Iteriere durch die plausiblen Bereiche
+
     Object.entries(plausibleRanges).forEach(([key, range]) => {
         console.log(`Überprüfe Plausibilität für ${key} mit Bereich ${range}`); // Debugging
         const canvas = document.getElementById(`chart-${key}`);
@@ -309,7 +401,7 @@ function applyPlausibilityChecks() {
             return;
         }
 
-        const chartInstance = Chart.getChart(canvas); // Bestehendes Diagramm abrufen
+        const chartInstance = Chart.getChart(canvas);
         if (!chartInstance) {
             console.error(`Diagramm für ${key} wurde nicht gefunden.`);
             return;
@@ -342,7 +434,7 @@ function applyPlausibilityChecks() {
             const backgroundColor = value >= min && value <= max
                 ? 'rgba(144, 238, 144, 0.3)' // Grün
                 : 'rgba(255, 99, 71, 0.3)'; // Rot
-        
+
             // Hintergrundfarbe setzen
             chartInstance.options.plugins.backgroundColorPlugin = {
                 beforeDraw: (chart) => {
@@ -353,13 +445,17 @@ function applyPlausibilityChecks() {
                     ctx.restore();
                 },
             };
-        
+
             console.log(`Hintergrundfarbe für ${key}: ${backgroundColor}`); // Debugging
             chartInstance.update(); // Diagramm erneut aktualisieren
         }, 1000);
-        
     });
 }
+
+
+// Initialize plausibility inputs when page loads
+createPlausibilityInputs();
+
 
 function initializeEmptyCharts() {
     const chartsContainer = document.getElementById('charts');
@@ -386,7 +482,7 @@ function initializeEmptyCharts() {
             data: {
                 labels: [key], // Label entspricht dem Key
                 datasets: [{
-                    label: `Leeres Diagramm: ${key}`,
+                    label: `${key}`,
                     data: [0], // Initial keine Daten
                     backgroundColor: 'rgba(192, 192, 192, 0.5)',
                     borderColor: 'rgba(192, 192, 192, 1)',
@@ -527,7 +623,7 @@ function displayErrorTable(machine, errorsArray = []) {
         const isErrorActive = errorsArray.includes(error.identifier); // Match identifier
         const status = isErrorActive
             ? '<span style="color: red;">❌</span>' // Red cross for active errors
-            : '<span style="color: green;">✔️</span>'; // Green checkmark for inactive errors
+            : '<span style="color: green;"> </span>'; // Green checkmark for inactive errors
 
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -580,7 +676,7 @@ function initializeRadarChart() {
         data: radarData,
         options: {
             responsive: true,
-            maintainAspectRatio: false,
+            maintainAspectRatio: true,
             scales: {
                 r: {
                     suggestedMin: 0,

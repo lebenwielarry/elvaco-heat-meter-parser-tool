@@ -41,29 +41,41 @@
             </section>
         </div>
         
-        <!-- Rest of your content -->
         <section id="charts-container">
-            <section id="charts">
-                <!-- Diagramme werden dynamisch hinzugefügt -->
-            </section>
-            <section id="details">
-                <h3 id="message-type">
-
-                </h3>
-                <table id="details-table">
-                    <thead>
-                        <tr>
-                            <th>Feld</th>
-                            <th>Wert</th>
-                            <th>Einheit</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Tabelle wird dynamisch gefüllt -->
-                    </tbody>
-                </table>
-            </section>
+            <!-- Container for charts + table -->
+            <div id="charts-row">
+                <div id="charts-column">
+                    <!-- Container for input fields above their respective charts -->
+                    <section id="charts-inputs">
+                        <!-- Inputs will be dynamically generated here -->
+                    </section>
+        
+                    <!-- Bar charts -->
+                    <section id="charts">
+                        <!-- Bar charts will be dynamically added here -->
+                    </section>
+                </div>
+        
+                <!-- Table (Details Section) -->
+                <section id="details">
+                    <h3 id="message-type"></h3>
+                    <table id="details-table">
+                        <thead>
+                            <tr>
+                                <th>Feld</th>
+                                <th>Wert</th>
+                                <th>Einheit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Tabelle wird dynamisch gefüllt -->
+                        </tbody>
+                    </table>
+                </section>
+            </div>
         </section>
+        
+        
         <section id="error-table-section">
             <h3>Fehlertabelle</h3>
             <div id="error-table-container">

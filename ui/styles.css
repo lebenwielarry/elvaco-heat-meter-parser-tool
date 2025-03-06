@@ -72,35 +72,96 @@ th {
 
 
 
-/* Hauptcontainer für Diagramme und Tabelle */
+/* Ensure the container stacks inputs above charts */
 #charts-container {
-    display: flex; /* Flexbox für nebeneinander Anordnung */
-    justify-content: space-between; /* Platz zwischen Diagrammen und Tabelle */
-    align-items: flex-start; /* Oben ausrichten */
-    gap: 20px; /* Abstand zwischen Diagrammen und Tabelle */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
 }
 
-/* Bereich für die Diagramme */
+/* Ensures inputs align exactly with charts */
+#charts-inputs {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 20px; /* Space between input sections */
+    margin-bottom: 10px; /* Space between inputs and charts */
+}
+
+/* Ensures each input set aligns with its respective chart */
+.plausibility-input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 150px; /* Ensures width consistency */
+}
+
+/* Make sure input fields are the same width */
+.plausibility-input-container input {
+    width: 60px;
+    text-align: center;
+    margin-top: 5px;
+}
+
+
+/* Ensure charts and table are side by side */
+#charts-row {
+    display: flex;
+    justify-content: space-between; /* Space between charts and table */
+    align-items: flex-start;
+    width: 100%;
+    gap: 20px;
+}
+
+/* Container for charts and their inputs */
+#charts-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 70%;
+}
+
+/* Bar charts section */
+/* Charts Section */
 #charts {
-    flex: 2; /* Nimmt 2 Teile des verfügbaren Platzes */
-    display: flex; /* Flexbox für die Diagramme */
-    flex-wrap: wrap; /* Diagramme umbrechen, falls nicht genug horizontaler Platz vorhanden */
-    gap: 20px; /* Abstand zwischen den Diagrammen */
-    justify-content: space-evenly; /* Platz zwischen den Diagrammen */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
 }
 
 /* Jedes Diagramm */
 #charts canvas {
     flex: 1; /* Alle Diagramme erhalten gleichmäßigen Platz */
-    min-width: 300px; /* Minimale Breite für jedes Diagramm */
+    min-width: 100px; /* Minimale Breite für jedes Diagramm */
     max-width: 400px; /* Maximale Breite für jedes Diagramm */
 }
 
-/* Bereich für die Tabelle */
+/* Table section */
 #details {
-    flex: 1; /* Nimmt 1 Teil des verfügbaren Platzes */
-    max-width: 400px; /* Maximale Breite der Tabelle */
-    overflow-x: auto; /* Scrollen, falls die Tabelle breiter ist */
+    flex: 1;
+    max-width: 400px;
+}
+
+/* Table formatting */
+#details-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#details-table th, #details-table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+}
+
+#details-table th {
+    background-color: #f0f0f0;
 }
 
 .error-table {
@@ -127,8 +188,8 @@ th {
     flex: 1;
     display: flex;
     /*margin: 20px auto; /* Centers the radar chart */
-    max-width: 500px; /* Adjust width for radar chart */
-    max-height: 400px; /* Adjust height */
+    max-width: 600px; /* Adjust width for radar chart */
+    max-height: 600px; /* Adjust height */
     /*border: 2px solid #f679797c; */
     /*background-color: rgba(89, 100, 104, 0.334);*/
 }
@@ -161,6 +222,7 @@ th {
 #plausibility-check-btn, #process-parser {
     margin-right: 10px; /* Fügt rechts von jedem Button einen Margin hinzu, außer dem letzten */
 }
+
 
 
 #parser-selection, #payload-processing, #radar-chart-section {

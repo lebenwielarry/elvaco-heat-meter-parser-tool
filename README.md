@@ -37,7 +37,7 @@ If you want to integrate your own parser into this application for testing and v
           meterId: '70907770',
           errorBitsValuePrefix: '02FD17',
           errorBitsValue: 12294,
-          errors: ['F1', 'F2'], // Optional: Array of error identifiers
+          errors: ['F1', 'F2'],_
       };
   }
   ```
