@@ -227,7 +227,7 @@ th {
 
 #parser-selection, #payload-processing, #radar-chart-section {
     flex: 1; /* This ensures that each section takes up equal space */
-    margin: 10px; /* Adds space around each section to prevent them from touching */
+    margin: 15px; /* Adds space around each section to prevent them from touching */
     min-width: 0; /* Prevents flex items from not shrinking below their content size */
 }
 
